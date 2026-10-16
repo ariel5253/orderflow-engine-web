@@ -7,8 +7,8 @@ import { UiText } from '../ui/ui-text/ui-text';
 import { StorePicker } from './store-picker';
 
 /**
- * The shell every screen starts with (SPEC §10.1): the brand, the navigation ("Shop"), the ES/EN switch and the store
- * picker. Everything wraps; nothing is cut.
+ * The shell every screen starts with (SPEC §10.1): the brand, the navigation ("Shop", and "My orders", also marked
+ * while one of the orders is open), the ES/EN switch and the store picker. Everything wraps; nothing is cut.
  */
 @Component({
   selector: 'app-shell-header',

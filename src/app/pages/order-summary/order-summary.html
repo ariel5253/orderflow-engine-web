@@ -64,7 +64,12 @@
             <ui-text notice-detail>{{ 'quote.confirmed.detail' | translate }}</ui-text>
           </ui-notice>
         } @else {
-          <ui-notice class="page-notice quote-state" tone="info">
+          <ui-notice
+            class="page-notice quote-state"
+            tone="info"
+            [actionLabel]="'order.actions.history' | translate"
+            (action)="viewHistory()"
+          >
             <ui-text notice-title>{{ 'quote.confirmed.title' | translate }}</ui-text>
             <ui-text notice-detail>{{ 'quote.confirmed.detail' | translate }}</ui-text>
           </ui-notice>

@@ -222,6 +222,11 @@ export class OrderSummaryPage {
     void this.router.navigate(['/orders', orderId]);
   }
 
+  /** "View my orders": a confirmed quote whose order this client does not know is found in My orders (SPEC §10.4). */
+  protected viewHistory(): void {
+    void this.router.navigate(['/orders']);
+  }
+
   /** The parameters of a way out's label: "View order {number}" names the order. */
   protected actionParams(failure: ApiFailure): Record<string, string> {
     return failure.kind === 'problem' && failure.problem.orderNumber ? { number: failure.problem.orderNumber } : {};

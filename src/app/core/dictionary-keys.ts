@@ -26,6 +26,8 @@ export const ACTION_KEYS = {
   requote: 'quote.actions.requote',
   viewOrder: 'quote.actions.viewOrder',
   edit: 'quote.actions.edit',
+  history: 'order.actions.history',
+  shop: 'history.actions.shop',
 } as const;
 
 export type NoticeAction = keyof typeof ACTION_KEYS;

@@ -7,7 +7,7 @@ import { App } from '../app/app';
 import { routes } from '../app/app.routes';
 import { apiHeadersInterceptor } from '../app/core/api-headers.interceptor';
 import { Language } from '../app/core/language';
-import { Order } from '../app/core/order-api';
+import { Order, OrderHistory } from '../app/core/order-api';
 import { ProductList } from '../app/core/product-api';
 import { Quote } from '../app/core/quote-api';
 import { Store, StoreContext } from '../app/core/store-context';
@@ -37,6 +37,21 @@ export const ORDER: Order = {
   totals: QUOTE.totals,
   paymentMethod: 'CREDIT',
 };
+
+/** An E-05 body, newest first: the fixture order, then two older ones of the same customer. */
+export const HISTORY: OrderHistory = {
+  currency: 'COP',
+  items: [
+    { orderId: ORDER.orderId, orderNumber: ORDER.orderNumber, confirmedAt: ORDER.confirmedAt, total: ORDER.totals.total },
+    { orderId: '9b2e7c4d-3f1a-4e8b-a6c5-1d0f2e3a4b5c', orderNumber: 'CO-000041', confirmedAt: '2026-10-14T15:03:12Z', total: '71103' },
+    { orderId: '3a4b5c6d-7e8f-4a1b-9c2d-e3f4a5b6c7d8', orderNumber: 'CO-000040', confirmedAt: '2026-10-13T09:30:00Z', total: '11529' },
+  ],
+};
+
+/** The E-05 path for a store: its own customer, the same one its X-Customer-Id names. */
+export function historyUrl(store: Store = STORES[0]): string {
+  return `/api/v1/orders?customerId=${store.customerId}`;
+}
 
 export interface AppOptions {
   readonly language?: Language;
@@ -149,14 +164,20 @@ export function flushOrder(request: TestRequest, order: Order = ORDER, replayed 
   request.flush(order, { status: 201, statusText: 'Created', headers });
 }
 
-/** Lets the screen render what it received, waits for its images, and scrolls to the top. */
+/**
+ * Lets the screen render what it received, waits for its images, and scrolls to the top. The image wait allows a slow,
+ * shared host several seconds: a correct screen must not fail because Chromium decoded an image late.
+ */
 export async function settle(fixture: ComponentFixture<unknown>): Promise<void> {
   await fixture.whenStable();
-  await vi.waitFor(() => {
-    for (const img of Array.from<HTMLImageElement>(fixture.nativeElement.querySelectorAll('img'))) {
-      expect(img.complete && img.naturalWidth > 0, img.src).toBe(true);
-    }
-  });
+  await vi.waitFor(
+    () => {
+      for (const img of Array.from<HTMLImageElement>(fixture.nativeElement.querySelectorAll('img'))) {
+        expect(img.complete && img.naturalWidth > 0, img.src).toBe(true);
+      }
+    },
+    { timeout: 5000, interval: 50 },
+  );
   window.scrollTo(0, 0);
 }
 

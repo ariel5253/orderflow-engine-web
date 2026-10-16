@@ -26,7 +26,8 @@
     },
     "nav": {
       "label": "Navegación principal",
-      "shop": "Comprar"
+      "shop": "Comprar",
+      "orders": "Mis pedidos"
     },
     "store": {
       "label": "Tienda"
@@ -149,7 +150,19 @@
       "detail": "Recibimos la misma confirmación otra vez: no se creó otro pedido ni se usó más cupo."
     },
     "actions": {
-      "continue": "Seguir comprando"
+      "continue": "Seguir comprando",
+      "history": "Ver mis pedidos"
+    }
+  },
+  "history": {
+    "title": "Mis pedidos",
+    "subtitle": "Del más reciente al más antiguo",
+    "empty": {
+      "title": "Aún no tienes pedidos",
+      "detail": "Cuando confirmes un pedido, aparecerá aquí."
+    },
+    "actions": {
+      "shop": "Ir a comprar"
     }
   }
 }

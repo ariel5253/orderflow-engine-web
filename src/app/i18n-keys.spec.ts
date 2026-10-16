@@ -6,6 +6,7 @@ import breakdownTotalsTemplate from './breakdown/breakdown-totals.html' with { l
 import { BUILT_KEYS, COUNT_FORMS, lineCountKey, unitCountKey } from './core/dictionary-keys';
 import { FORMAT_LOCALE_KEY, Language, SUPPORTED_LANGUAGES } from './core/language';
 import cartTemplate from './pages/cart/cart.html' with { loader: 'text' };
+import historyTemplate from './pages/history/history.html' with { loader: 'text' };
 import orderSummaryTemplate from './pages/order-summary/order-summary.html' with { loader: 'text' };
 import orderTemplate from './pages/order/order.html' with { loader: 'text' };
 import shellHeaderTemplate from './shell/shell-header.html' with { loader: 'text' };
@@ -25,6 +26,7 @@ const TEMPLATES: Readonly<Record<string, string>> = {
   'breakdown/breakdown-lines.html': breakdownLinesTemplate,
   'breakdown/breakdown-totals.html': breakdownTotalsTemplate,
   'pages/cart/cart.html': cartTemplate,
+  'pages/history/history.html': historyTemplate,
   'pages/order-summary/order-summary.html': orderSummaryTemplate,
   'pages/order/order.html': orderTemplate,
   'shell/shell-header.html': shellHeaderTemplate,

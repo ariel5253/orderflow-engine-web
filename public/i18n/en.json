@@ -26,7 +26,8 @@
     },
     "nav": {
       "label": "Main navigation",
-      "shop": "Shop"
+      "shop": "Shop",
+      "orders": "My orders"
     },
     "store": {
       "label": "Store"
@@ -149,7 +150,19 @@
       "detail": "We received the same confirmation again: no second order was created and no more credit was used."
     },
     "actions": {
-      "continue": "Keep shopping"
+      "continue": "Keep shopping",
+      "history": "View my orders"
+    }
+  },
+  "history": {
+    "title": "My orders",
+    "subtitle": "Newest first",
+    "empty": {
+      "title": "You have no orders yet",
+      "detail": "Confirmed orders appear here."
+    },
+    "actions": {
+      "shop": "Go shopping"
     }
   }
 }

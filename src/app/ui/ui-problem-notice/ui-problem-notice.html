@@ -15,10 +15,8 @@
       <h2 class="notice__title"><ui-text>{{ 'problem.network.title' | translate }}</ui-text></h2>
       <p class="notice__detail"><ui-text>{{ 'problem.network.detail' | translate }}</ui-text></p>
     }
-    @if (actionLabel(); as label) {
-      <button type="button" class="notice__action" [disabled]="actionDisabled()" (click)="action.emit()">
-        <ui-text>{{ label }}</ui-text>
-      </button>
-    }
+    <button type="button" class="notice__action" [disabled]="actionDisabled()" (click)="action.emit()">
+      <ui-text>{{ actionLabel() }}</ui-text>
+    </button>
   </div>
 </section>

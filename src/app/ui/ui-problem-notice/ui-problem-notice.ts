@@ -19,8 +19,8 @@ import { UiText } from '../ui-text/ui-text';
 export class UiProblemNotice {
   readonly failure = input.required<ApiFailure>();
 
-  /** The label of the way out, already translated; none when the screen offers no action. */
-  readonly actionLabel = input<string | null>(null);
+  /** The label of the way out, already translated. Every problem has exactly one (SPEC §10.5), so it is required. */
+  readonly actionLabel = input.required<string>();
 
   /** Whether the action is unavailable, such as while the request it sends waits for its answer. */
   readonly actionDisabled = input(false);

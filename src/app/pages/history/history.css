@@ -1,0 +1,80 @@
+/* My orders' own parts: the order list, its rows and the empty state. The layout and the action bar keep their rules. */
+
+.order-list {
+  overflow: hidden;
+}
+
+.order-list li + li {
+  border-top: 1px solid var(--ofe-border);
+}
+
+/* One row per order: the number and the date wrap on the left; the total sits whole in a box sized to fit it. */
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ofe-space-3);
+  box-sizing: border-box;
+  min-height: 56px;
+  padding: var(--ofe-space-3);
+  color: var(--ofe-ink);
+  text-decoration: none;
+}
+
+.order-item:hover {
+  background: var(--ofe-surface-sunken);
+}
+
+/* The list clips its rows to its rounded corners, so the focus ring is drawn inside the row. */
+.order-item:focus-visible {
+  outline: 2px solid var(--ofe-focus);
+  outline-offset: -2px;
+}
+
+.order-item__main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.order-item__number {
+  font-weight: 700;
+}
+
+.order-item__date {
+  color: var(--ofe-text-muted);
+  font-size: 13px;
+}
+
+.order-item__total {
+  flex: none;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.order-item__chevron {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--ofe-text-subtle);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofe-space-2);
+  padding: var(--ofe-space-4);
+}
+
+.empty-state__detail {
+  color: var(--ofe-text-muted);
+}
+
+/* The only action, at the end of the bar; below 640 px it takes the whole width like every primary action. */
+.history-actions {
+  justify-content: flex-end;
+}

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TestRequest } from '@angular/common/http/testing';
 import { page } from 'vitest/browser';
 import {
+  HISTORY,
   ORDER,
   PRODUCTS,
   QUOTE,
@@ -14,6 +15,7 @@ import {
   flushNoAnswer,
   flushOrder,
   flushProblem,
+  historyUrl,
   idempotencyKeyOf,
   navigate,
   openApp,
@@ -297,7 +299,7 @@ describe('confirmation and client idempotency (AC-49)', () => {
     expect(fresh.nativeElement.querySelector('ui-notice')).toBeNull();
   });
 
-  it('shows a confirmed quote with its order when this client knows it, and with no action otherwise', async () => {
+  it('shows a confirmed quote with its order when this client knows it, and with "View my orders" otherwise', async () => {
     const { credit, ...withoutCredit } = QUOTE;
     expect(credit).toBeDefined();
     const confirmed: Quote = { ...withoutCredit, status: 'CONFIRMED' };
@@ -321,8 +323,14 @@ describe('confirmation and client idempotency (AC-49)', () => {
     expectRequest({ method: 'GET', url: `/api/v1/quotes/${QUOTE.quoteId}` }).flush(confirmed);
     await settle(unknown);
     expect(texts(unknown, 'ui-notice .notice__title')).toEqual(['Esta cotización ya es un pedido']);
-    expect(unknown.nativeElement.querySelector('ui-notice button')).toBeNull();
+    expect(texts(unknown, 'ui-notice button')).toEqual(['Ver mis pedidos']);
     expect(button(unknown, 'Confirmar pedido').disabled).toBe(true);
+    button(unknown, 'Ver mis pedidos').click();
+    await vi.waitFor(() => expect(currentUrl()).toBe('/orders'));
+    TestBed.tick();
+    expectRequest({ method: 'GET', url: historyUrl() }).flush(HISTORY);
+    await settle(unknown);
+    expect(texts(unknown, '.order-item__number')[0]).toBe(ORDER.orderNumber);
   });
 
   it('offers "Quote again" on an expired quote, with the same lines and the payment method the client sent', async () => {
