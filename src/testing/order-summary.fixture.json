@@ -6,7 +6,7 @@
   "lines": [
     {
       "sku": "BEV-COLA-350",
-      "description": "Cola 350 ml",
+      "description": "Gaseosa cola 350 ml",
       "qty": 40,
       "isGift": false,
       "unitPrice": "2500",
@@ -24,7 +24,7 @@
     },
     {
       "sku": "SNK-CHIPS-45",
-      "description": "Chips 45 g",
+      "description": "Papas fritas 45 g",
       "qty": 10,
       "isGift": false,
       "unitPrice": "1800",
@@ -40,7 +40,7 @@
     },
     {
       "sku": "BEV-WATER-600",
-      "description": "Water 600 ml",
+      "description": "Agua 600 ml",
       "qty": 1,
       "isGift": true,
       "origin": "GIFT:01a13cdb-cc00-7001-8005-000000000001",

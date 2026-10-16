@@ -81,7 +81,7 @@ describe('the whole flow, by clicks, on the simulated backend (AC-52)', () => {
       await arrive(fixture, `/quotes/${QUOTE.quoteId}`);
       expectRequest({ method: 'GET', url: `/api/v1/quotes/${QUOTE.quoteId}`, language }).flush(QUOTE);
       await settle(fixture);
-      expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647']);
+      expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647\u00a0COP']);
 
       // Confirm: E-03 with the quote id and a new key, then E-04 at the order's route.
       button(fixture, text('orderSummary.actions.confirm')).click();
@@ -100,7 +100,7 @@ describe('the whole flow, by clicks, on the simulated backend (AC-52)', () => {
       await settle(fixture);
       expect(texts(fixture, 'h1')).toEqual([text('order.title', { number: ORDER.orderNumber })]);
       expect(texts(fixture, 'ui-notice .notice__title')).toEqual([text('order.created.title')]);
-      expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647']);
+      expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647\u00a0COP']);
 
       // The 201 emptied the store's cart, in memory and in browser storage.
       expect(TestBed.inject(CartStore).cart()).toEqual(EMPTY_CART);
@@ -113,7 +113,7 @@ describe('the whole flow, by clicks, on the simulated backend (AC-52)', () => {
       await settle(fixture);
       expect(texts(fixture, 'h1')).toEqual([text('history.title')]);
       expect(texts(fixture, '.order-item__number')[0]).toBe(ORDER.orderNumber);
-      expect(texts(fixture, '.order-item__total')[0]).toBe('$115,647');
+      expect(texts(fixture, '.order-item__total')[0]).toBe('$115,647\u00a0COP');
       // Its date in the locale the active dictionary names, so a screen that ignores the language fails in one of them.
       const dateFormat = new Intl.DateTimeFormat(text(FORMAT_LOCALE_KEY), { dateStyle: 'medium', timeStyle: 'short' });
       expect(texts(fixture, '.order-item__date')[0]).toBe(dateFormat.format(new Date(HISTORY.items[0].confirmedAt)));

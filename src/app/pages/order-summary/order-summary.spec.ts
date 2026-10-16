@@ -126,7 +126,7 @@ describe('order summary (/quotes/:quoteId)', () => {
     expect(texts(fixture, 'h1')).toEqual(['Resumen del pedido']);
     expect(texts(fixture, '.chip--status')).toEqual(['Abierta']);
     expect(texts(fixture, '.card__subtitle')).toEqual(['3 líneas', 'Valores en COP']);
-    expect(texts(fixture, '.line__name')).toEqual(['Cola 350 ml', 'Chips 45 g', 'Water 600 ml']);
+    expect(texts(fixture, '.line__name')).toEqual(['Gaseosa cola 350 ml', 'Papas fritas 45 g', 'Agua 600 ml']);
     expect(texts(fixture, '.line__qty')).toEqual(['40 × $2,500', '10 × $1,800']);
     expect(texts(fixture, '.line__headline-value')).toEqual(['$85,265', '$13,235', 'Sin costo']);
     expect(texts(fixture, '.chip--gift')).toEqual(['Obsequio × 1']);
@@ -137,10 +137,10 @@ describe('order summary (/quotes/:quoteId)', () => {
       'Descuento por volumen TIER:01a13cdb-cc00-7001-8003-000000000001',
     ]);
     expect(texts(fixture, '.totals__discounts dd')).toEqual(['-$18,000', '-$1,500']);
-    expect(texts(fixture, '.totals__gifts dt')).toEqual(['Water 600 ml × 1 GIFT:01a13cdb-cc00-7001-8005-000000000001']);
+    expect(texts(fixture, '.totals__gifts dt')).toEqual(['Agua 600 ml × 1 GIFT:01a13cdb-cc00-7001-8005-000000000001']);
     expect(texts(fixture, '.totals__summary dd')).toEqual(['$118,000', '$100,000', '$17,147']);
     expect(texts(fixture, '.totals__grand dd')).toEqual(['$115,647']);
-    expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647']);
+    expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647\u00a0COP']);
 
     // A combo allocation only explains a line's base; it is never shown as a discount (A-07).
     expect(texts(fixture, 'dd.is-share')).toEqual(['-$13,235', '-$4,765']);
@@ -177,7 +177,7 @@ describe('order summary (/quotes/:quoteId)', () => {
     const root: HTMLElement = fixture.nativeElement;
 
     expect(texts(fixture, 'h1')).toEqual(['Order summary']);
-    expect(texts(fixture, '.action-bar__total-value')).toEqual(['$77.11']);
+    expect(texts(fixture, '.action-bar__total-value')).toEqual(['$77.11\u00a0USD']);
     expect(textOutsideUiText(root)).toEqual([]);
     expect(clippedUiText(root)).toEqual([]);
     expect(horizontalOverflow()).toBeLessThanOrEqual(0);
@@ -234,7 +234,7 @@ describe('order summary (/quotes/:quoteId)', () => {
     expectQuoteRequest().flush(QUOTE);
     await settle(fixture);
     expect(fixture.nativeElement.querySelector('ui-problem-notice')).toBeNull();
-    expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647']);
+    expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647\u00a0COP']);
   });
 
   it('offers Retry for INTERNAL_ERROR, and treats a 502 without a problem body as no answer', async () => {

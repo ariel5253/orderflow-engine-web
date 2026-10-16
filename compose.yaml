@@ -4,6 +4,8 @@
 services:
   web:
     build: .
+    # Docker starts the client again after a crash or a restart of Docker itself, unless it was stopped on purpose.
+    restart: unless-stopped
     environment:
       API_UPSTREAM: ${API_UPSTREAM:-http://host.docker.internal:8080}
     ports:

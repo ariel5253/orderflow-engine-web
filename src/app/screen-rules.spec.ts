@@ -56,6 +56,22 @@ const LONG_HISTORY: OrderHistory = {
 };
 const LONG_SHORT_QUOTE: Quote = withLongNames({ ...QUOTE, credit: { fits: false, available: '100000', shortfall: '15647' } });
 
+/** The same cart, order and history in dollars: COP and USD share the $ symbol, so only the code tells them apart. */
+const USD_LIST_PRICES = ['1.45', '0.60', '0.45', '0.55'];
+const LONG_USD_PRODUCTS: ProductList = {
+  currency: 'USD',
+  items: LONG_PRODUCTS.items.map((product, index) => ({ ...product, listPrice: USD_LIST_PRICES[index] })),
+};
+const LONG_USD_ORDER: Order = { ...LONG_ORDER, currency: 'USD', totals: { ...LONG_ORDER.totals, total: '77.11' } };
+const LONG_USD_HISTORY: OrderHistory = {
+  currency: 'USD',
+  items: [
+    { ...HISTORY.items[0], total: '123456789012345.67' },
+    { ...HISTORY.items[1], total: '77.11' },
+    { ...HISTORY.items[2], total: '0.60' },
+  ],
+};
+
 const VIEWPORTS: readonly (readonly [width: number, height: number])[] = [
   [768, 1024],
   [375, 812],
@@ -114,7 +130,21 @@ describe('screen rules on every screen (AC-42 ... AC-44)', () => {
 
       expect(texts(fixture, '.product-card__name')).toEqual(PRODUCTS.items.map((product) => LONG_NAMES[product.sku]));
       expect(texts(fixture, '.store-picker__value')).toEqual([LONG_STORES[0].name]);
+      expect(texts(fixture, '.cart-currency')).toEqual(['Precios en COP']);
       expect(texts(fixture, '.action-bar__summary')).toEqual(['1,234,567 unidades']);
+      expectScreenRules(root, width, PRODUCTS.items.length);
+      expectTouchTargets(root);
+    });
+
+    it(`cart in USD: the currency line names the body's currency, at ${width} x ${height}`, async () => {
+      await page.viewport(width, height);
+      const fixture = await openApp('/cart', { stores: LONG_STORES });
+      expectRequest({ method: 'GET', url: '/api/v1/products', store: LONG_STORES[0] }).flush(LONG_USD_PRODUCTS);
+      await settle(fixture);
+      const root: HTMLElement = fixture.nativeElement;
+
+      expect(texts(fixture, '.cart-currency')).toEqual(['Precios en USD']);
+      expect(texts(fixture, '.product-card__amount')).toEqual(['$1.45', '$0.60', '$0.45', '$0.55']);
       expectScreenRules(root, width, PRODUCTS.items.length);
       expectTouchTargets(root);
     });
@@ -145,8 +175,20 @@ describe('screen rules on every screen (AC-42 ... AC-44)', () => {
       const root: HTMLElement = fixture.nativeElement;
 
       expect(texts(fixture, '.line__name')).toEqual(ORDER.lines.map((line) => LONG_NAMES[line.sku]));
-      expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647']);
+      expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647\u00a0COP']);
       expect(root.querySelectorAll('ui-text.amount').length).toBeGreaterThan(20);
+      expectScreenRules(root, width, ORDER.lines.length);
+      expectTouchTargets(root);
+    });
+
+    it(`order in USD: the code follows the total, which stays whole, at ${width} x ${height}`, async () => {
+      await page.viewport(width, height);
+      const fixture = await openApp(`/orders/${ORDER.orderId}`, { stores: LONG_STORES });
+      expectRequest({ method: 'GET', url: `/api/v1/orders/${ORDER.orderId}`, store: LONG_STORES[0] }).flush(LONG_USD_ORDER);
+      await settle(fixture);
+      const root: HTMLElement = fixture.nativeElement;
+
+      expect(texts(fixture, '.action-bar__total-value')).toEqual(['$77.11\u00a0USD']);
       expectScreenRules(root, width, ORDER.lines.length);
       expectTouchTargets(root);
     });
@@ -159,6 +201,7 @@ describe('screen rules on every screen (AC-42 ... AC-44)', () => {
       const root: HTMLElement = fixture.nativeElement;
 
       expect(texts(fixture, 'ui-notice .notice__title')).toEqual(['El pedido no cabe en tu cupo']);
+      expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647\u00a0COP']);
       expectScreenRules(root, width, QUOTE.lines.length);
       expectTouchTargets(root);
     });
@@ -172,7 +215,23 @@ describe('screen rules on every screen (AC-42 ... AC-44)', () => {
 
       expect(texts(fixture, '.store-picker__value')).toEqual([LONG_STORES[0].name]);
       expect(texts(fixture, '.order-item__number')).toEqual(LONG_HISTORY.items.map((item) => item.orderNumber));
-      expect(texts(fixture, '.order-item__total')[0]).toBe('$12,345,678,901,234,567');
+      expect(texts(fixture, '.order-item__total')).toEqual(['$12,345,678,901,234,567\u00a0COP', '$71,103\u00a0COP', '$11,529\u00a0COP']);
+      expectScreenRules(root, width, 0);
+      expectTouchTargets(root);
+    });
+
+    it(`My orders in USD: the code follows every total, which stays whole, at ${width} x ${height}`, async () => {
+      await page.viewport(width, height);
+      const fixture = await openApp('/orders', { stores: LONG_STORES });
+      expectRequest({ method: 'GET', url: historyUrl(LONG_STORES[0]), store: LONG_STORES[0] }).flush(LONG_USD_HISTORY);
+      await settle(fixture);
+      const root: HTMLElement = fixture.nativeElement;
+
+      expect(texts(fixture, '.order-item__total')).toEqual([
+        '$123,456,789,012,345.67\u00a0USD',
+        '$77.11\u00a0USD',
+        '$0.60\u00a0USD',
+      ]);
       expectScreenRules(root, width, 0);
       expectTouchTargets(root);
     });
