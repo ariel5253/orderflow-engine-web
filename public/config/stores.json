@@ -1,0 +1,22 @@
+[
+  {
+    "tenantId": "co-alpha",
+    "customerId": "01a13cdb-cc00-7001-8001-000000000001",
+    "name": "North Corner Shop"
+  },
+  {
+    "tenantId": "co-alpha",
+    "customerId": "01a13cdb-cc00-7001-8001-000000000002",
+    "name": "South Corner Shop"
+  },
+  {
+    "tenantId": "ec-alpha",
+    "customerId": "01a13cdb-cc00-7002-8001-000000000001",
+    "name": "Quito Corner Shop"
+  },
+  {
+    "tenantId": "ec-alpha",
+    "customerId": "01a13cdb-cc00-7002-8001-000000000002",
+    "name": "Guayaquil Corner Shop"
+  }
+]

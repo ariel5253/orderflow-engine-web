@@ -1,0 +1,77 @@
+/* A problem the user has to read: icon, the API's text, the support reference, and the way out. */
+ui-problem-notice {
+  display: block;
+  min-width: 0;
+}
+
+ui-problem-notice .notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ofe-space-3);
+  padding: var(--ofe-space-3);
+  border: 1px solid var(--ofe-danger-border);
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-danger-bg);
+  color: var(--ofe-danger-ink);
+}
+
+ui-problem-notice .notice__icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+ui-problem-notice .notice__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ofe-space-1);
+  min-width: 0;
+}
+
+ui-problem-notice .notice__title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+ui-problem-notice .notice__detail {
+  color: var(--ofe-ink);
+}
+
+ui-problem-notice .notice__meta .code {
+  color: var(--ofe-danger-ink);
+}
+
+ui-problem-notice .notice__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin-top: var(--ofe-space-2);
+  padding: 0 var(--ofe-space-4);
+  border: 1px solid var(--ofe-danger-ink);
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-surface);
+  color: var(--ofe-danger-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+ui-problem-notice .notice__action:hover {
+  background: var(--ofe-danger-bg);
+}
+
+ui-problem-notice .notice__action:focus-visible {
+  outline: 2px solid var(--ofe-focus);
+  outline-offset: 2px;
+}

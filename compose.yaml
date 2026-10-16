@@ -1,0 +1,14 @@
+# The web client alone: nginx serves it and forwards /api/ to an API that runs on the host, started by the API
+# repository's own compose. Every value comes from .env when it exists, otherwise from the default after ":-", which
+# is the .env.example value, so a fresh clone starts without a .env.
+services:
+  web:
+    build: .
+    environment:
+      API_UPSTREAM: ${API_UPSTREAM:-http://host.docker.internal:8080}
+    ports:
+      - "${WEB_PORT:-8081}:8080"
+    # nginx resolves the upstream name when it starts and exits if it does not resolve. Docker Desktop knows
+    # host.docker.internal; on Linux this line maps it to the host gateway.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

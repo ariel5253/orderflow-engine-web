@@ -1,0 +1,24 @@
+<section class="notice" role="alert">
+  <svg class="notice__icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" />
+    <path d="M12 8v4" />
+    <path d="M12 16h.01" />
+  </svg>
+  <div class="notice__body">
+    @if (problem(); as problem) {
+      <h2 class="notice__title"><ui-text>{{ problem.title }}</ui-text></h2>
+      <p class="notice__detail"><ui-text>{{ problem.detail }}</ui-text></p>
+      <p class="notice__meta">
+        <ui-text class="code">{{ 'problem.meta' | translate: { code: problem.code, ref: reference() } }}</ui-text>
+      </p>
+    } @else {
+      <h2 class="notice__title"><ui-text>{{ 'problem.network.title' | translate }}</ui-text></h2>
+      <p class="notice__detail"><ui-text>{{ 'problem.network.detail' | translate }}</ui-text></p>
+    }
+    @if (actionLabel(); as label) {
+      <button type="button" class="notice__action" (click)="action.emit()">
+        <ui-text>{{ label }}</ui-text>
+      </button>
+    }
+  </div>
+</section>
