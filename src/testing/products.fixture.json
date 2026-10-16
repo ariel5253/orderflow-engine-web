@@ -1,0 +1,9 @@
+{
+  "currency": "COP",
+  "items": [
+    { "sku": "BEV-COLA-1500", "description": "Cola 1.5 l", "listPrice": "5200", "taxRate": "0.190000" },
+    { "sku": "BEV-COLA-350", "description": "Cola 350 ml", "listPrice": "2500", "taxRate": "0.190000" },
+    { "sku": "BEV-WATER-600", "description": "Water 600 ml", "listPrice": "1500", "taxRate": "0.190000" },
+    { "sku": "SNK-CHIPS-45", "description": "Chips 45 g", "listPrice": "1800", "taxRate": "0.050000" }
+  ]
+}

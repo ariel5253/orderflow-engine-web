@@ -1,9 +1,10 @@
 /*
- * Design tokens and base styles. Palette: slate ink, orange promotions, green success, red problems. Every text color
- * keeps at least 4.5:1 contrast with each background it is used on.
+ * Design tokens, base styles and the layout every screen shares. Palette: slate ink, orange actions and promotions,
+ * green success, red problems. Every text color keeps at least 4.5:1 contrast with each background it is used on.
  */
 :root {
   --ofe-ink: #0f172a;
+  --ofe-ink-soft: #1e293b;
   --ofe-text-muted: #475569;
   --ofe-text-subtle: #64748b;
 
@@ -11,11 +12,16 @@
   --ofe-surface: #ffffff;
   --ofe-surface-sunken: #f1f5f9;
   --ofe-border: #e2e8f0;
+  --ofe-border-strong: #cbd5e1;
 
+  --ofe-accent: #c2410c;
+  --ofe-accent-hover: #9a3412;
   --ofe-promo-bg: #ffedd5;
+  --ofe-promo-border: #fed7aa;
   --ofe-promo-ink: #9a3412;
   --ofe-gift-row: #fffbf5;
   --ofe-success-bg: #dcfce7;
+  --ofe-success-border: #bbf7d0;
   --ofe-success-ink: #166534;
   --ofe-danger-bg: #fee2e2;
   --ofe-danger-border: #fecaca;
@@ -33,6 +39,7 @@
   --ofe-radius: 8px;
   --ofe-radius-full: 9999px;
 
+  --ofe-shadow-1: 0 2px 4px -1px rgba(15, 23, 42, 0.06), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
   --ofe-shadow-up: 0 -10px 15px -3px rgba(15, 23, 42, 0.08), 0 -4px 6px -4px rgba(15, 23, 42, 0.03);
 
   --ofe-image-ratio: 1 / 1;
@@ -75,4 +82,305 @@ ul {
   font-size: 11px;
   line-height: 16px;
   color: var(--ofe-text-subtle);
+}
+
+/* A screen: the shell header, its own header, its content and the action bar. 100dvh, so mobile browser chrome
+   never hides the bar. */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.page-header {
+  border-bottom: 1px solid var(--ofe-border);
+  background: var(--ofe-surface);
+}
+
+.page-header__inner,
+.page-main,
+.action-bar__inner {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--ofe-content-max);
+  margin: 0 auto;
+}
+
+.page-header__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofe-space-2);
+  padding: var(--ofe-space-3);
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 30px;
+  letter-spacing: -0.015em;
+}
+
+.page-subtitle {
+  color: var(--ofe-text-muted);
+}
+
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ofe-space-2) var(--ofe-space-3);
+  color: var(--ofe-text-muted);
+}
+
+.page-meta > *,
+.card__header > * {
+  min-width: 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ofe-space-1);
+  min-width: 0;
+  padding: 2px 10px;
+  border-radius: var(--ofe-radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+.chip--status[data-status='OPEN'] {
+  background: var(--ofe-success-bg);
+  color: var(--ofe-success-ink);
+}
+
+.chip--status[data-status='CONFIRMED'] {
+  background: var(--ofe-surface-sunken);
+  color: var(--ofe-ink);
+}
+
+.chip--status[data-status='EXPIRED'] {
+  background: var(--ofe-danger-bg);
+  color: var(--ofe-danger-ink);
+}
+
+.chip--gift {
+  background: var(--ofe-promo-bg);
+  color: var(--ofe-promo-ink);
+}
+
+/* Content: one column; from 1024 px a breakdown takes two (lines and a sticky summary). A notice spans both. */
+.page-main {
+  flex: 1 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: var(--ofe-space-4);
+  padding: var(--ofe-space-4) var(--ofe-space-3);
+}
+
+.page-main > .page-notice {
+  grid-column: 1 / -1;
+}
+
+.page-loading {
+  color: var(--ofe-text-muted);
+}
+
+.summary-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofe-space-3);
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .page-header__inner {
+    padding: var(--ofe-space-4) 32px;
+  }
+
+  .page-title {
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  .page-main {
+    padding: 32px;
+  }
+
+  .page-main--breakdown {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    align-items: start;
+  }
+
+  .summary-column {
+    position: sticky;
+    top: var(--ofe-space-4);
+  }
+}
+
+.card {
+  min-width: 0;
+  border: 1px solid var(--ofe-border);
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-surface);
+}
+
+.card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ofe-space-1) var(--ofe-space-3);
+  padding: var(--ofe-space-3);
+}
+
+.card__title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.card__subtitle {
+  color: var(--ofe-text-muted);
+  font-size: 12px;
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofe-space-2);
+  padding: 0 var(--ofe-space-3) var(--ofe-space-3);
+}
+
+.note {
+  color: var(--ofe-text-subtle);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/* Rows of label and amount: the label wraps; the amount sits in an auto column sized to fit it. */
+.totals {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--ofe-space-2) var(--ofe-space-3);
+  align-items: baseline;
+}
+
+.totals dt {
+  min-width: 0;
+  color: var(--ofe-text-muted);
+}
+
+.totals dd {
+  font-variant-numeric: tabular-nums lining-nums;
+  text-align: right;
+}
+
+.totals .is-discount {
+  color: var(--ofe-success-ink);
+}
+
+.totals .is-total {
+  color: var(--ofe-ink);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.totals dd.is-total {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+}
+
+/* Action bar content: a total or a count, then the actions. It wraps instead of hiding anything. */
+.action-bar__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ofe-space-2) var(--ofe-space-3);
+}
+
+.action-bar__total {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.action-bar__total-label {
+  color: var(--ofe-text-muted);
+  font-size: 12px;
+}
+
+.action-bar__total-value {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 24px;
+}
+
+.action-bar__summary {
+  font-weight: 600;
+}
+
+/* Buttons: one primary action per screen, secondary ones beside it. Both are at least 44 px tall. */
+.button-primary,
+.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ofe-space-2);
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 0 var(--ofe-space-4);
+  border-radius: var(--ofe-radius);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button-primary {
+  border: 0;
+  background: var(--ofe-accent);
+  color: #ffffff;
+}
+
+.button-primary:hover:enabled,
+a.button-primary:hover {
+  background: var(--ofe-accent-hover);
+}
+
+.button-primary:disabled {
+  background: var(--ofe-border-strong);
+  color: var(--ofe-ink-soft);
+  cursor: not-allowed;
+}
+
+.button-secondary {
+  border: 1px solid var(--ofe-border-strong);
+  background: var(--ofe-surface);
+  color: var(--ofe-ink);
+}
+
+.button-secondary:hover {
+  background: var(--ofe-surface-sunken);
+}
+
+.button-primary:focus-visible,
+.button-secondary:focus-visible {
+  outline: 2px solid var(--ofe-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 639px) {
+  .button-primary {
+    flex: 1 1 100%;
+  }
+
+  .button-secondary {
+    flex: 1 1 auto;
+  }
 }

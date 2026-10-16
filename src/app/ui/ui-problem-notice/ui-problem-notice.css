@@ -67,7 +67,12 @@ ui-problem-notice .notice__action {
   cursor: pointer;
 }
 
-ui-problem-notice .notice__action:hover {
+ui-problem-notice .notice__action:disabled {
+  color: var(--ofe-text-muted);
+  cursor: not-allowed;
+}
+
+ui-problem-notice .notice__action:hover:enabled {
   background: var(--ofe-danger-bg);
 }
 

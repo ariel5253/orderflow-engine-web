@@ -1,6 +1,7 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router, provideRouter, withComponentInputBinding } from '@angular/router';
 import { page } from 'vitest/browser';
 import stores from '../../../../public/config/stores.json';
 import longNames from '../../../testing/long-names.json';
@@ -16,6 +17,7 @@ import {
   truncatingElements,
 } from '../../../testing/screen-checks';
 import { provideTestTranslations } from '../../../testing/translations';
+import { routes } from '../../app.routes';
 import { apiHeadersInterceptor } from '../../core/api-headers.interceptor';
 import { Language } from '../../core/language';
 import { Quote } from '../../core/quote-api';
@@ -37,9 +39,10 @@ async function open(language: Language = 'es'): Promise<ComponentFixture<OrderSu
       provideHttpClient(withInterceptors([apiHeadersInterceptor])),
       provideHttpClientTesting(),
       provideTestTranslations(language),
+      provideRouter(routes, withComponentInputBinding()),
     ],
   });
-  TestBed.inject(StoreContext).useFirstOf(stores);
+  TestBed.inject(StoreContext).load(stores);
   const fixture = TestBed.createComponent(OrderSummaryPage);
   fixture.componentRef.setInput('quoteId', QUOTE.quoteId);
   // Not whenStable: the pending request keeps the screen unstable until the simulated backend answers.
@@ -82,6 +85,7 @@ const VIEWPORTS: readonly [width: number, height: number][] = [
 ];
 
 describe('order summary (/quotes/:quoteId)', () => {
+  beforeEach(() => localStorage.clear());
   afterEach(() => TestBed.inject(HttpTestingController).verify());
 
   for (const [width, height] of VIEWPORTS) {
@@ -179,7 +183,7 @@ describe('order summary (/quotes/:quoteId)', () => {
     expect(horizontalOverflow()).toBeLessThanOrEqual(0);
   });
 
-  it('shows the problem the API sends, with no action of its own in this screen', async () => {
+  it('shows the problem the API sends, with "Edit cart" as its way out', async () => {
     await page.viewport(375, 812);
     const fixture = await open();
     expectQuoteRequest().flush(
@@ -200,10 +204,13 @@ describe('order summary (/quotes/:quoteId)', () => {
       'Cotización no encontrada',
       'No existe una cotización con ese identificador para este cliente.',
       'Código QUOTE_NOT_FOUND · Ref. 0f3a9d2e',
+      'Modificar carrito',
     ]);
-    expect(fixture.nativeElement.querySelector('button')).toBeNull();
     expect(fixture.nativeElement.querySelector('ui-action-bar')).toBeNull();
     expect(textOutsideUiText(fixture.nativeElement)).toEqual([]);
+
+    fixture.nativeElement.querySelector('ui-problem-notice button').click();
+    await vi.waitFor(() => expect(TestBed.inject(Router).url).toBe('/cart'));
   });
 
   it('retries the same request after no answer, then renders the quote', async () => {
@@ -254,14 +261,14 @@ describe('order summary (/quotes/:quoteId)', () => {
     expect(texts(fixture, 'ui-problem-notice button')).toEqual(['Reintentar']);
   });
 
-  it('offers no Retry for a 4xx answer without a problem body, such as a misrouted proxy page', async () => {
+  it('offers no Retry for a 4xx answer without a problem body, such as a misrouted proxy page, but "Edit cart"', async () => {
     await page.viewport(375, 812);
     const fixture = await open();
     expectQuoteRequest().flush('<html>Not Found</html>', { status: 404, statusText: 'Not Found' });
     await fixture.whenStable();
 
     expect(texts(fixture, 'ui-problem-notice .notice__title')).toEqual(['No pudimos comunicarnos con el servidor']);
-    expect(fixture.nativeElement.querySelector('ui-problem-notice button')).toBeNull();
+    expect(texts(fixture, 'ui-problem-notice button')).toEqual(['Modificar carrito']);
   });
 
   it('counts one line in the singular and several in the plural, in both languages', async () => {

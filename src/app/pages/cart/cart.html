@@ -1,0 +1,115 @@
+<div class="page">
+  <app-shell-header />
+
+  <header class="page-header">
+    <div class="page-header__inner">
+      <h1 class="page-title"><ui-text>{{ 'cart.title' | translate }}</ui-text></h1>
+      <p class="page-subtitle"><ui-text>{{ 'cart.subtitle' | translate }}</ui-text></p>
+    </div>
+  </header>
+
+  <main class="page-main">
+    @if (notice(); as notice) {
+      <ui-problem-notice
+        class="page-notice"
+        [failure]="notice.failure"
+        [actionLabel]="actionKey(notice.action) | translate"
+        [actionDisabled]="quoting()"
+        (action)="act(notice)"
+      />
+    }
+
+    @if (products(); as products) {
+      <ul class="product-grid">
+        @for (product of products.items; track product.sku) {
+          <li class="product-card">
+            <ui-product-image [sku]="product.sku" />
+            <div class="product-card__body">
+              <h2 class="product-card__name"><ui-text>{{ product.description }}</ui-text></h2>
+              <ui-text class="product-card__sku code">{{ product.sku }}</ui-text>
+              <p class="product-card__price">
+                <ui-text class="product-card__amount amount">{{ product.listPrice | money: products.currency }}</ui-text>
+                <ui-text class="product-card__tax">{{ 'cart.productTax' | translate: { rate: (product.taxRate | rate) } }}</ui-text>
+              </p>
+            </div>
+            <div class="stepper">
+              <button
+                type="button"
+                class="stepper__button"
+                [attr.aria-label]="'cart.decrease' | translate: { name: product.description }"
+                (click)="step(product.sku, -1)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
+              </button>
+              <input
+                class="stepper__input"
+                type="number"
+                inputmode="numeric"
+                min="0"
+                step="1"
+                [attr.data-sku]="product.sku"
+                [value]="quantity(product.sku)"
+                [attr.aria-label]="'cart.quantity' | translate: { name: product.description }"
+                (input)="typed(product.sku, $event)"
+                (change)="committed(product.sku, $event)"
+              />
+              <button
+                type="button"
+                class="stepper__button"
+                [attr.aria-label]="'cart.increase' | translate: { name: product.description }"
+                (click)="step(product.sku, 1)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14" /><path d="M5 12h14" /></svg>
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+
+      <fieldset class="card payment">
+        <legend class="payment__legend"><ui-text>{{ 'cart.payment' | translate }}</ui-text></legend>
+        <div class="payment__options">
+          @for (method of paymentMethods; track method) {
+            <label class="payment__option">
+              <input
+                type="radio"
+                name="paymentMethod"
+                [value]="method"
+                [checked]="cart().paymentMethod === method"
+                (change)="choosePayment(method)"
+              />
+              <ui-text>{{ paymentKey(method) | translate }}</ui-text>
+            </label>
+          }
+        </div>
+      </fieldset>
+    } @else if (!notice() && !settledWithoutProducts()) {
+      <p class="page-loading" aria-live="polite"><ui-text>{{ 'common.loading' | translate }}</ui-text></p>
+    }
+  </main>
+
+  <ui-action-bar>
+    <div class="action-bar__inner">
+      @let unitCount = units();
+      <div class="action-bar__total">
+        @if (unitCount > 0) {
+          <ui-text class="action-bar__summary">{{ unitsKey(unitCount) | translate: { count: (unitCount | count) } }}</ui-text>
+        } @else {
+          <ui-text class="action-bar__summary">{{ 'cart.empty' | translate }}</ui-text>
+        }
+      </div>
+      <button
+        type="button"
+        class="button-primary"
+        [disabled]="unitCount === 0 || quoting()"
+        (click)="getQuote()"
+      >
+        @if (quoting()) {
+          <ui-text>{{ 'cart.actions.quoting' | translate }}</ui-text>
+        } @else {
+          <ui-text>{{ 'cart.actions.quote' | translate }}</ui-text>
+        }
+      </button>
+    </div>
+  </ui-action-bar>
+</div>

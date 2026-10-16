@@ -8,6 +8,8 @@ import { Language } from './language';
 import { StoreContext } from './store-context';
 
 describe('apiHeadersInterceptor', () => {
+  beforeEach(() => localStorage.clear());
+
   function setUp(language: Language): { http: HttpClient; backend: HttpTestingController } {
     TestBed.configureTestingModule({
       providers: [
@@ -16,7 +18,7 @@ describe('apiHeadersInterceptor', () => {
         provideTestTranslations(language),
       ],
     });
-    TestBed.inject(StoreContext).useFirstOf(stores);
+    TestBed.inject(StoreContext).load(stores);
     return { http: TestBed.inject(HttpClient), backend: TestBed.inject(HttpTestingController) };
   }
 
@@ -53,6 +55,40 @@ describe('apiHeadersInterceptor', () => {
     expect(request.request.headers.get('Accept-Language')).toBe('en');
     expect(request.request.headers.get('X-Tenant-Id')).toBe('co-alpha');
     request.flush({});
+  });
+
+  it('sends the store the picker selects: switching the store changes both headers', () => {
+    const { http, backend } = setUp('es');
+    const context = TestBed.inject(StoreContext);
+
+    context.select(stores[2]);
+    http.get('/api/v1/products').subscribe();
+    const ecuador = backend.expectOne('/api/v1/products');
+    expect(ecuador.request.headers.get('X-Tenant-Id')).toBe('ec-alpha');
+    expect(ecuador.request.headers.get('X-Customer-Id')).toBe('01a13cdb-cc00-7002-8001-000000000001');
+    ecuador.flush({});
+
+    context.select(stores[1]);
+    http.get('/api/v1/products').subscribe();
+    const south = backend.expectOne('/api/v1/products');
+    expect(south.request.headers.get('X-Tenant-Id')).toBe('co-alpha');
+    expect(south.request.headers.get('X-Customer-Id')).toBe('01a13cdb-cc00-7001-8001-000000000002');
+    south.flush({});
+  });
+
+  it('remembers the selected store in the browser, and falls back to the first store when it is not configured', () => {
+    setUp('es');
+    TestBed.inject(StoreContext).select(stores[3]);
+    TestBed.resetTestingModule();
+
+    setUp('es');
+    expect(TestBed.inject(StoreContext).current()).toEqual(stores[3]);
+    TestBed.resetTestingModule();
+
+    setUp('es');
+    TestBed.inject(StoreContext).load(stores.slice(0, 2));
+    expect(TestBed.inject(StoreContext).current()).toEqual(stores[0]);
+    expect(() => TestBed.inject(StoreContext).select(stores[3])).toThrowError(/Not a configured store/);
   });
 
   it('leaves requests outside /api/ untouched', () => {

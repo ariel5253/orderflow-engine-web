@@ -22,6 +22,9 @@ export class UiProblemNotice {
   /** The label of the way out, already translated; none when the screen offers no action. */
   readonly actionLabel = input<string | null>(null);
 
+  /** Whether the action is unavailable, such as while the request it sends waits for its answer. */
+  readonly actionDisabled = input(false);
+
   readonly action = output<void>();
 
   protected readonly problem = computed(() => {

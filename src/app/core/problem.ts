@@ -9,6 +9,9 @@ export interface Problem {
   readonly code: string;
   readonly correlationId: string;
   readonly instance?: string;
+  /** QUOTE_ALREADY_CONFIRMED names the order the quote became (api-contract BD-03). */
+  readonly orderId?: string;
+  readonly orderNumber?: string;
 }
 
 /**

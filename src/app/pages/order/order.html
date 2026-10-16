@@ -1,0 +1,66 @@
+<div class="page">
+  <app-shell-header />
+
+  <header class="page-header">
+    <div class="page-header__inner">
+      @if (order(); as order) {
+        <h1 class="page-title"><ui-text>{{ 'order.title' | translate: { number: order.orderNumber } }}</ui-text></h1>
+        <div class="page-meta">
+          <span class="chip chip--status" [attr.data-status]="order.status">
+            <ui-text>{{ orderStatusKey(order.status) | translate }}</ui-text>
+          </span>
+          <ui-text class="order-confirmed-at">{{ 'order.confirmedAt' | translate: { time: (order.confirmedAt | dateTime) } }}</ui-text>
+          <ui-text class="order-payment">
+            {{ 'order.payment' | translate: { method: (paymentKey(order.paymentMethod) | translate) } }}
+          </ui-text>
+        </div>
+      } @else {
+        <h1 class="page-title"><ui-text>{{ 'order.heading' | translate }}</ui-text></h1>
+      }
+    </div>
+  </header>
+
+  <main class="page-main page-main--breakdown">
+    @if (order(); as order) {
+      @if (created()) {
+        <ui-notice class="page-notice order-outcome" tone="success">
+          <ui-text notice-title>{{ 'order.created.title' | translate }}</ui-text>
+          <ui-text notice-detail>{{ 'order.created.detail' | translate: { number: order.orderNumber } }}</ui-text>
+        </ui-notice>
+      } @else if (replayed()) {
+        <ui-notice class="page-notice order-outcome" tone="info">
+          <ui-text notice-title>{{ 'order.replayed.title' | translate }}</ui-text>
+          <ui-text notice-detail>{{ 'order.replayed.detail' | translate }}</ui-text>
+        </ui-notice>
+      }
+
+      <app-breakdown-lines [breakdown]="order" />
+
+      <div class="summary-column">
+        <app-breakdown-totals [breakdown]="order" />
+      </div>
+    } @else if (failure(); as failure) {
+      @let wayOut = orderWayOut(failure);
+      <ui-problem-notice
+        class="page-notice"
+        [failure]="failure"
+        [actionLabel]="wayOut ? (actionKey(wayOut) | translate) : null"
+        (action)="retry()"
+      />
+    } @else {
+      <p class="page-loading" aria-live="polite"><ui-text>{{ 'common.loading' | translate }}</ui-text></p>
+    }
+  </main>
+
+  @if (order(); as order) {
+    <ui-action-bar>
+      <div class="action-bar__inner">
+        <div class="action-bar__total">
+          <ui-text class="action-bar__total-label">{{ 'orderSummary.totals.total' | translate }}</ui-text>
+          <ui-text class="action-bar__total-value amount">{{ order.totals.total | money: order.currency }}</ui-text>
+        </div>
+        <a class="button-primary" routerLink="/cart"><ui-text>{{ 'order.actions.continue' | translate }}</ui-text></a>
+      </div>
+    </ui-action-bar>
+  }
+</div>

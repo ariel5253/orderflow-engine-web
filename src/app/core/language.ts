@@ -1,4 +1,4 @@
-import { DOCUMENT, EnvironmentProviders, Provider, inject, provideAppInitializer } from '@angular/core';
+import { DOCUMENT, EnvironmentProviders, Injectable, Provider, inject, provideAppInitializer } from '@angular/core';
 import { TranslateService, provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { firstValueFrom } from 'rxjs';
@@ -13,6 +13,24 @@ export const FORMAT_LOCALE_KEY = 'app.formatLocale';
 
 export function resolveLanguage(requested: string | null | undefined): Language {
   return SUPPORTED_LANGUAGES.find((language) => language === requested) ?? DEFAULT_LANGUAGE;
+}
+
+/** The active language, and the ES/EN switch of the shell: it changes the language at run time (SPEC §9). */
+@Injectable({ providedIn: 'root' })
+export class ActiveLanguage {
+  private readonly translate = inject(TranslateService);
+  private readonly document = inject(DOCUMENT);
+
+  /** Read inside a computed or a template, it follows the switch. */
+  current(): Language {
+    return resolveLanguage(this.translate.getCurrentLang());
+  }
+
+  /** Every later API call sends this language, so the problem texts arrive in it. */
+  use(language: Language): void {
+    this.document.documentElement.lang = language;
+    this.translate.use(language);
+  }
 }
 
 /**
