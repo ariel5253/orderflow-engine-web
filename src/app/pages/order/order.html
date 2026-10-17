@@ -44,8 +44,8 @@
       <ui-problem-notice
         class="page-notice"
         [failure]="failure"
-        [actionLabel]="wayOut ? (actionKey(wayOut) | translate) : null"
-        (action)="retry()"
+        [actionLabel]="actionKey(wayOut) | translate"
+        (action)="act(failure)"
       />
     } @else {
       <p class="page-loading" aria-live="polite"><ui-text>{{ 'common.loading' | translate }}</ui-text></p>
@@ -59,6 +59,7 @@
           <ui-text class="action-bar__total-label">{{ 'orderSummary.totals.total' | translate }}</ui-text>
           <ui-text class="action-bar__total-value amount">{{ order.totals.total | money: order.currency }}</ui-text>
         </div>
+        <a class="button-secondary" routerLink="/orders"><ui-text>{{ 'order.actions.history' | translate }}</ui-text></a>
         <a class="button-primary" routerLink="/cart"><ui-text>{{ 'order.actions.continue' | translate }}</ui-text></a>
       </div>
     </ui-action-bar>

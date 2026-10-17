@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, map, of } from 'rxjs';
 import { BreakdownLines } from '../../breakdown/breakdown-lines';
@@ -20,18 +20,18 @@ import { UiText } from '../../ui/ui-text/ui-text';
 type OrderResult = { readonly kind: 'order'; readonly order: Order } | { readonly kind: 'failure'; readonly failure: ApiFailure };
 
 /**
- * The way out of an E-04 problem on the order screen: "Retry" for no answer, INTERNAL_ERROR and
- * IDEMPOTENCY_KEY_IN_PROGRESS (SPEC §10.5). Any other problem offers "View my orders", which joins with My orders, so
- * until then its notice offers no action.
+ * The way out of an E-04 problem on the order screen (SPEC §10.5): "Retry" for no answer, INTERNAL_ERROR and
+ * IDEMPOTENCY_KEY_IN_PROGRESS; "View my orders" for any other, such as ORDER_NOT_FOUND.
  */
-export function orderWayOut(failure: ApiFailure): NoticeAction | null {
-  return isRetryable(failure) ? 'retry' : null;
+export function orderWayOut(failure: ApiFailure): NoticeAction {
+  return isRetryable(failure) ? 'retry' : 'history';
 }
 
 /**
  * The order (SPEC §10.1, route /orders/:orderId): E-04 read on every visit, with its number, its confirmation time,
- * its payment method and the same breakdown components as the summary. Right after E-03 it says whether the order was
- * just confirmed or had already been recorded. The client keeps no copy of an order.
+ * its payment method and the same breakdown components as the summary, then "View my orders" and "Keep shopping".
+ * Right after E-03 it says whether the order was just confirmed or had already been recorded. The client keeps no
+ * copy of an order.
  */
 @Component({
   selector: 'app-order',
@@ -58,6 +58,7 @@ export class OrderPage implements OnInit {
 
   private readonly orderApi = inject(OrderApi);
   private readonly outcomes = inject(ConfirmationOutcomes);
+  private readonly router = inject(Router);
 
   private readonly result = rxResource<OrderResult, string>({
     params: () => this.orderId(),
@@ -98,8 +99,12 @@ export class OrderPage implements OnInit {
     this.outcome.set(this.outcomes.take(this.orderId()));
   }
 
-  /** "Retry" reads the order again. */
-  protected retry(): void {
-    this.result.reload();
+  /** The way out of an E-04 problem: "Retry" reads the order again; "View my orders" opens My orders. */
+  protected act(failure: ApiFailure): void {
+    if (orderWayOut(failure) === 'retry') {
+      this.result.reload();
+    } else {
+      void this.router.navigate(['/orders']);
+    }
   }
 }

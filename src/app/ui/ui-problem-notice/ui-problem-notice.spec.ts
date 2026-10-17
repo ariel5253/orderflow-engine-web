@@ -22,13 +22,13 @@ const PROBLEM: Problem = {
 })
 class NoticeHost {
   failure: ApiFailure = { kind: 'noAnswer' };
-  actionLabel: string | null = null;
+  actionLabel = 'Reintentar';
   actions = 0;
 }
 
 async function render(
   failure: ApiFailure,
-  actionLabel: string | null,
+  actionLabel: string,
   language: Language = 'es',
 ): Promise<ComponentFixture<NoticeHost>> {
   TestBed.configureTestingModule({ providers: [provideTestTranslations(language)] });
@@ -61,12 +61,6 @@ describe('ui-problem-notice', () => {
     expect(fixture.componentInstance.actions).toBe(2);
   });
 
-  it('shows no action when it is given none', async () => {
-    const fixture = await render({ kind: 'problem', problem: PROBLEM }, null);
-    expect(fixture.nativeElement.querySelector('button')).toBeNull();
-    expect(texts(fixture)).toHaveLength(3);
-  });
-
   it('shows the web text problem.network for a request with no answer', async () => {
     const spanish = await render({ kind: 'noAnswer' }, 'Reintentar');
     expect(texts(spanish)).toEqual([
@@ -80,10 +74,14 @@ describe('ui-problem-notice', () => {
     expect(texts(english)).toEqual(['We could not reach the server', 'Check your connection and try again.', 'Retry']);
   });
 
-  it('shows the same web text for an answer that is not a problem, with only the action it is given', async () => {
-    const fixture = await render({ kind: 'unexpectedAnswer' }, null);
-    expect(texts(fixture)).toEqual(['No pudimos comunicarnos con el servidor', 'Revisa tu conexión e inténtalo de nuevo.']);
-    expect(fixture.nativeElement.querySelector('button')).toBeNull();
+  it('shows the same web text for an answer that is not a problem, with the one action it is given', async () => {
+    const fixture = await render({ kind: 'unexpectedAnswer' }, 'Revisar carrito');
+    expect(texts(fixture)).toEqual([
+      'No pudimos comunicarnos con el servidor',
+      'Revisa tu conexión e inténtalo de nuevo.',
+      'Revisar carrito',
+    ]);
+    expect(fixture.nativeElement.querySelectorAll('button')).toHaveLength(1);
   });
 });
 

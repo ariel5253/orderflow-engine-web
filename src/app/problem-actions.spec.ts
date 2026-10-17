@@ -3,6 +3,7 @@ import { TestRequest } from '@angular/common/http/testing';
 import { page, userEvent } from 'vitest/browser';
 import {
   CORRELATION_ID,
+  HISTORY,
   ORDER,
   PRODUCTS,
   QUOTE,
@@ -13,6 +14,7 @@ import {
   flushNoAnswer,
   flushProblem,
   flushQuote,
+  historyUrl,
   openApp,
   settle,
   texts,
@@ -63,14 +65,14 @@ function answer(request: TestRequest, code: string, status: number): void {
   }
 }
 
-/** The notice shows the API's text, the code and the reference, then exactly one way out, or none when it has not joined. */
-function expectNotice(fixture: ComponentFixture<unknown>, code: string, action: string | null): void {
+/** The notice shows the API's text, the code and the reference, then exactly one way out. */
+function expectNotice(fixture: ComponentFixture<unknown>, code: string, action: string): void {
   const expected =
     code === NO_ANSWER
       ? ['No pudimos comunicarnos con el servidor', 'Revisa tu conexión e inténtalo de nuevo.']
       : [`Título de ${code}`, `Detalle de ${code}`, `Código ${code} · Ref. ${CORRELATION_ID.slice(0, 8)}`];
   expect(texts(fixture, 'ui-problem-notice .notice__body > :not(button) ui-text')).toEqual(expected);
-  expect(texts(fixture, 'ui-problem-notice button')).toEqual(action === null ? [] : [action]);
+  expect(texts(fixture, 'ui-problem-notice button')).toEqual([action]);
   expect(textOutsideUiText(fixture.nativeElement)).toEqual([]);
 }
 
@@ -275,26 +277,74 @@ describe('problem -> action (AC-51)', () => {
   });
 
   describe('order: an E-04 problem', () => {
-    // The order's default way out, "View my orders", opens My orders and joins with that screen.
     for (const [code, status] of CASES) {
-      const action = RETRYABLE.has(code) ? 'Reintentar' : null;
+      const action = RETRYABLE.has(code) ? 'Reintentar' : 'Ver mis pedidos';
 
-      it(`${code}: ${action === null ? 'no action yet' : `"${action}"`}`, async () => {
+      it(`${code}: "${action}"`, async () => {
         const fixture = await openApp(`/orders/${ORDER.orderId}`);
         answer(expectRequest({ method: 'GET', url: `/api/v1/orders/${ORDER.orderId}` }), code, status);
         await settle(fixture);
         expectNotice(fixture, code, action);
         expect(fixture.nativeElement.querySelector('ui-action-bar')).toBeNull();
 
+        takeWayOut(fixture);
         if (action === 'Reintentar') {
-          takeWayOut(fixture);
+          // The same read again.
           expectRequest({ method: 'GET', url: `/api/v1/orders/${ORDER.orderId}` }).flush(ORDER);
           await settle(fixture);
           expect(texts(fixture, 'h1')).toEqual(['Pedido CO-000042']);
         } else {
-          expect(currentUrl()).toBe(`/orders/${ORDER.orderId}`);
+          // My orders opens, and reads E-05.
+          await vi.waitFor(() => expect(currentUrl()).toBe('/orders'));
+          TestBed.tick();
+          expectRequest({ method: 'GET', url: historyUrl() }).flush(HISTORY);
+          await settle(fixture);
+          expect(texts(fixture, 'h1')).toEqual(['Mis pedidos']);
         }
       });
     }
+  });
+
+  describe('My orders: an E-05 problem', () => {
+    for (const [code, status] of CASES) {
+      const action = RETRYABLE.has(code) ? 'Reintentar' : 'Ir a comprar';
+
+      it(`${code}: "${action}"`, async () => {
+        const fixture = await openApp('/orders');
+        answer(expectRequest({ method: 'GET', url: historyUrl() }), code, status);
+        await settle(fixture);
+        expectNotice(fixture, code, action);
+        expect(fixture.nativeElement.querySelector('ui-action-bar')).toBeNull();
+
+        takeWayOut(fixture);
+        if (action === 'Reintentar') {
+          // The same read again.
+          expectRequest({ method: 'GET', url: historyUrl() }).flush(HISTORY);
+          await settle(fixture);
+          expect(fixture.nativeElement.querySelector('ui-problem-notice')).toBeNull();
+          expect(texts(fixture, '.order-item__number')).toEqual(['CO-000042', 'CO-000041', 'CO-000040']);
+        } else {
+          // The cart opens.
+          await vi.waitFor(() => expect(currentUrl()).toBe('/cart'));
+          TestBed.tick();
+          expectRequest({ method: 'GET', url: '/api/v1/products' }).flush(PRODUCTS);
+          await settle(fixture);
+          expect(texts(fixture, 'h1')).toEqual(['Comprar']);
+        }
+      });
+    }
+
+    it('a 4xx without a problem body (a misrouted proxy): the no-answer text with "Go shopping", never "Retry"', async () => {
+      const fixture = await openApp('/orders');
+      expectRequest({ method: 'GET', url: historyUrl() }).flush('<html>Not Found</html>', { status: 404, statusText: 'Not Found' });
+      await settle(fixture);
+      expectNotice(fixture, NO_ANSWER, 'Ir a comprar');
+
+      takeWayOut(fixture);
+      await vi.waitFor(() => expect(currentUrl()).toBe('/cart'));
+      TestBed.tick();
+      expectRequest({ method: 'GET', url: '/api/v1/products' }).flush(PRODUCTS);
+      await settle(fixture);
+    });
   });
 });

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { page, userEvent } from 'vitest/browser';
 import {
+  HISTORY,
   ORDER,
   PRODUCTS,
   QUOTE,
@@ -9,6 +10,7 @@ import {
   backend,
   element,
   expectRequest,
+  historyUrl,
   navigate,
   openApp,
   settle,
@@ -28,7 +30,7 @@ import {
 } from '../testing/screen-checks';
 import { BreakdownLines } from './breakdown/breakdown-lines';
 import { BreakdownTotals } from './breakdown/breakdown-totals';
-import { Order } from './core/order-api';
+import { Order, OrderHistory } from './core/order-api';
 import { ProductList } from './core/product-api';
 import { Breakdown, Quote } from './core/quote-api';
 import { Store } from './core/store-context';
@@ -46,6 +48,12 @@ function withLongNames<T extends Breakdown>(body: T): T {
 }
 
 const LONG_ORDER: Order = withLongNames(ORDER);
+
+/** E-05 with a total of 17 digits first: it must sit whole beside its number and date. */
+const LONG_HISTORY: OrderHistory = {
+  ...HISTORY,
+  items: [{ ...HISTORY.items[0], total: '12345678901234567' }, ...HISTORY.items.slice(1)],
+};
 const LONG_SHORT_QUOTE: Quote = withLongNames({ ...QUOTE, credit: { fits: false, available: '100000', shortfall: '15647' } });
 
 const VIEWPORTS: readonly (readonly [width: number, height: number])[] = [
@@ -152,6 +160,32 @@ describe('screen rules on every screen (AC-42 ... AC-44)', () => {
 
       expect(texts(fixture, 'ui-notice .notice__title')).toEqual(['El pedido no cabe en tu cupo']);
       expectScreenRules(root, width, QUOTE.lines.length);
+      expectTouchTargets(root);
+    });
+
+    it(`My orders: long store names and long totals stay whole, and every order is reachable, at ${width} x ${height}`, async () => {
+      await page.viewport(width, height);
+      const fixture = await openApp('/orders', { stores: LONG_STORES });
+      expectRequest({ method: 'GET', url: historyUrl(LONG_STORES[0]), store: LONG_STORES[0] }).flush(LONG_HISTORY);
+      await settle(fixture);
+      const root: HTMLElement = fixture.nativeElement;
+
+      expect(texts(fixture, '.store-picker__value')).toEqual([LONG_STORES[0].name]);
+      expect(texts(fixture, '.order-item__number')).toEqual(LONG_HISTORY.items.map((item) => item.orderNumber));
+      expect(texts(fixture, '.order-item__total')[0]).toBe('$12,345,678,901,234,567');
+      expectScreenRules(root, width, 0);
+      expectTouchTargets(root);
+    });
+
+    it(`My orders, empty: long store names stay whole at ${width} x ${height}`, async () => {
+      await page.viewport(width, height);
+      const fixture = await openApp('/orders', { stores: LONG_STORES });
+      expectRequest({ method: 'GET', url: historyUrl(LONG_STORES[0]), store: LONG_STORES[0] }).flush({ currency: 'COP', items: [] });
+      await settle(fixture);
+      const root: HTMLElement = fixture.nativeElement;
+
+      expect(texts(fixture, '.empty-state .card__title')).toEqual(['Aún no tienes pedidos']);
+      expectScreenRules(root, width, 0);
       expectTouchTargets(root);
     });
   }

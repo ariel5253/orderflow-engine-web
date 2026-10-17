@@ -1,0 +1,54 @@
+<div class="page">
+  <app-shell-header />
+
+  <header class="page-header">
+    <div class="page-header__inner">
+      <h1 class="page-title"><ui-text>{{ 'history.title' | translate }}</ui-text></h1>
+      <p class="page-subtitle"><ui-text>{{ 'history.subtitle' | translate }}</ui-text></p>
+    </div>
+  </header>
+
+  <main class="page-main">
+    @if (history(); as history) {
+      @if (history.items.length) {
+        <ul class="card order-list">
+          @for (item of history.items; track item.orderId) {
+            <li>
+              <a class="order-item" [routerLink]="orderLink(item.orderId)">
+                <span class="order-item__main">
+                  <ui-text class="order-item__number">{{ item.orderNumber }}</ui-text>
+                  <ui-text class="order-item__date">{{ item.confirmedAt | dateTime }}</ui-text>
+                </span>
+                <ui-text class="order-item__total amount">{{ item.total | money: history.currency }}</ui-text>
+                <svg class="order-item__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6" /></svg>
+              </a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <section class="card empty-state">
+          <h2 class="card__title"><ui-text>{{ 'history.empty.title' | translate }}</ui-text></h2>
+          <p class="empty-state__detail"><ui-text>{{ 'history.empty.detail' | translate }}</ui-text></p>
+        </section>
+      }
+    } @else if (failure(); as failure) {
+      @let wayOut = historyWayOut(failure);
+      <ui-problem-notice
+        class="page-notice"
+        [failure]="failure"
+        [actionLabel]="actionKey(wayOut) | translate"
+        (action)="act(failure)"
+      />
+    } @else {
+      <p class="page-loading" aria-live="polite"><ui-text>{{ 'common.loading' | translate }}</ui-text></p>
+    }
+  </main>
+
+  @if (history()) {
+    <ui-action-bar>
+      <div class="action-bar__inner history-actions">
+        <a class="button-primary" routerLink="/cart"><ui-text>{{ 'history.actions.shop' | translate }}</ui-text></a>
+      </div>
+    </ui-action-bar>
+  }
+</div>
