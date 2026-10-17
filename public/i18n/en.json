@@ -3,7 +3,6 @@
     "formatLocale": "en"
   },
   "common": {
-    "amountInCurrency": "{{amount}}\u00a0{{currency}}",
     "loading": "Loading…",
     "retry": "Retry"
   },

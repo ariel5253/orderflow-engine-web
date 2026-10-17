@@ -8,7 +8,7 @@ import { BreakdownTotals } from '../../breakdown/breakdown-totals';
 import { ConfirmationOutcome, ConfirmationOutcomes } from '../../core/confirmation-outcome';
 import { NoticeAction, actionKey, orderStatusKey, paymentKey } from '../../core/dictionary-keys';
 import { DateTimePipe } from '../../core/format';
-import { MoneyPipe } from '../../core/money.pipe';
+import { MoneyCodePipe, MoneyPipe } from '../../core/money.pipe';
 import { Order, OrderApi } from '../../core/order-api';
 import { ApiFailure, isRetryable, toApiFailure } from '../../core/problem';
 import { ShellHeader } from '../../shell/shell-header';
@@ -46,6 +46,7 @@ export function orderWayOut(failure: ApiFailure): NoticeAction {
     UiProblemNotice,
     TranslatePipe,
     MoneyPipe,
+    MoneyCodePipe,
     DateTimePipe,
   ],
   templateUrl: './order.html',

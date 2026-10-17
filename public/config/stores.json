@@ -18,5 +18,25 @@
     "tenantId": "ec-alpha",
     "customerId": "01a13cdb-cc00-7002-8001-000000000002",
     "name": "Tienda Guayaquil"
+  },
+  {
+    "tenantId": "gt-alpha",
+    "customerId": "01a13cdb-cc00-7003-8001-000000000001",
+    "name": "Tienda Ciudad de Guatemala"
+  },
+  {
+    "tenantId": "gt-alpha",
+    "customerId": "01a13cdb-cc00-7003-8001-000000000002",
+    "name": "Tienda Quetzaltenango"
+  },
+  {
+    "tenantId": "pe-alpha",
+    "customerId": "01a13cdb-cc00-7004-8001-000000000001",
+    "name": "Tienda Lima"
+  },
+  {
+    "tenantId": "pe-alpha",
+    "customerId": "01a13cdb-cc00-7004-8001-000000000002",
+    "name": "Tienda Arequipa"
   }
 ]

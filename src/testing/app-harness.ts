@@ -49,6 +49,15 @@ export const HISTORY: OrderHistory = {
   ],
 };
 
+/** The configured store with this name, from public/config/stores.json; a missing one fails with its name. */
+export function storeNamed(name: string): Store {
+  const found = STORES.find((store) => store.name === name);
+  if (!found) {
+    throw new Error(`stores.json has no store named ${name}`);
+  }
+  return found;
+}
+
 /** The E-05 path for a store: its own customer, the same one its X-Customer-Id names. */
 export function historyUrl(store: Store = STORES[0]): string {
   return `/api/v1/orders?customerId=${store.customerId}`;

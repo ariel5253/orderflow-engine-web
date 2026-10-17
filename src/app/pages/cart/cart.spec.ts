@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { page, userEvent } from 'vitest/browser';
 import {
   PRODUCTS,
@@ -13,6 +13,7 @@ import {
   navigate,
   openApp,
   settle,
+  storeNamed,
   texts,
 } from '../../../testing/app-harness';
 
@@ -28,6 +29,38 @@ const EC_PRODUCTS = {
     { sku: 'SNK-PLANTAIN-45', description: 'Chifles 45 g', listPrice: '0.55', taxRate: '0.150000' },
   ],
 };
+
+/** The gt-alpha list of E-07: quetzales at scale 2, all at 12% tax (data model §1). */
+const GT_PRODUCTS = {
+  currency: 'GTQ',
+  items: [
+    { sku: 'BEV-COLA-1500', description: 'Gaseosa cola 1,5 l', listPrice: '15.00', taxRate: '0.120000' },
+    { sku: 'BEV-COLA-350', description: 'Gaseosa cola 350 ml', listPrice: '5.00', taxRate: '0.120000' },
+    { sku: 'BEV-WATER-600', description: 'Agua 600 ml', listPrice: '4.00', taxRate: '0.120000' },
+    { sku: 'SNK-CHIPS-45', description: 'Papas fritas 45 g', listPrice: '3.50', taxRate: '0.120000' },
+  ],
+};
+
+/** The pe-alpha list of E-07: soles at scale 2, all at 18% tax (data model §1). */
+const PE_PRODUCTS = {
+  currency: 'PEN',
+  items: [
+    { sku: 'BEV-COLA-1500', description: 'Gaseosa cola 1,5 l', listPrice: '7.50', taxRate: '0.180000' },
+    { sku: 'BEV-COLA-350', description: 'Gaseosa cola 350 ml', listPrice: '2.50', taxRate: '0.180000' },
+    { sku: 'BEV-WATER-600', description: 'Agua 600 ml', listPrice: '2.00', taxRate: '0.180000' },
+    { sku: 'SNK-CHIPS-45', description: 'Papas fritas 45 g', listPrice: '1.80', taxRate: '0.180000' },
+  ],
+};
+
+/** The open picker's groups: each tenant with the names of its stores, in the order shown. */
+function pickerGroups(fixture: ComponentFixture<unknown>): Record<string, string[]> {
+  const groups: Record<string, string[]> = {};
+  for (const group of Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('.store-picker__group'))) {
+    const options = Array.from(group.querySelectorAll('.store-picker__option ui-text'));
+    groups[group.getAttribute('aria-label') ?? ''] = options.map((option) => option.textContent?.trim() ?? '');
+  }
+  return groups;
+}
 
 function quantityInput(sku: string): HTMLInputElement {
   return document.querySelector<HTMLInputElement>(`input[data-sku="${sku}"]`)!;
@@ -159,7 +192,16 @@ describe('cart (/cart)', () => {
     expect(texts(fixture, '.store-picker__value')).toEqual(['Tienda Norte']);
     element(fixture, '.store-picker summary').click();
     TestBed.tick();
-    expect(texts(fixture, '.store-picker__option')).toEqual(['Tienda Norte', 'Tienda Sur', 'Tienda Quito', 'Tienda Guayaquil']);
+    expect(texts(fixture, '.store-picker__option')).toEqual([
+      'Tienda Norte',
+      'Tienda Sur',
+      'Tienda Quito',
+      'Tienda Guayaquil',
+      'Tienda Ciudad de Guatemala',
+      'Tienda Quetzaltenango',
+      'Tienda Lima',
+      'Tienda Arequipa',
+    ]);
     button(fixture, STORES[2].name).click();
     TestBed.tick();
     expectRequest({ method: 'GET', url: PRODUCTS_PATH, store: STORES[2] }).flush(EC_PRODUCTS);
@@ -186,6 +228,50 @@ describe('cart (/cart)', () => {
     await settle(reloaded);
     expect(quantityInput('BEV-COLA-350').value).toBe('25');
     expect(texts(reloaded, '.action-bar__summary')).toEqual(['25 unidades']);
+  });
+
+  it('groups the stores by the four seeded tenants, and a Guatemala and a Peru store list their catalog in GTQ and PEN', async () => {
+    await page.viewport(768, 1024);
+    const fixture = await openApp('/cart');
+    expectRequest({ method: 'GET', url: PRODUCTS_PATH }).flush(PRODUCTS);
+    await settle(fixture);
+
+    // The four countries of the assignment (SPEC §5), each tenant with its own stores.
+    element(fixture, '.store-picker summary').click();
+    TestBed.tick();
+    expect(texts(fixture, '.store-picker__tenant')).toEqual(['co-alpha', 'ec-alpha', 'gt-alpha', 'pe-alpha']);
+    expect(pickerGroups(fixture)).toEqual({
+      'co-alpha': ['Tienda Norte', 'Tienda Sur'],
+      'ec-alpha': ['Tienda Quito', 'Tienda Guayaquil'],
+      'gt-alpha': ['Tienda Ciudad de Guatemala', 'Tienda Quetzaltenango'],
+      'pe-alpha': ['Tienda Lima', 'Tienda Arequipa'],
+    });
+
+    // Guatemala: the request speaks for gt-alpha, and quetzales carry their code above the grid.
+    const guatemala = storeNamed('Tienda Ciudad de Guatemala');
+    expect(guatemala.tenantId).toBe('gt-alpha');
+    button(fixture, guatemala.name).click();
+    TestBed.tick();
+    expectRequest({ method: 'GET', url: PRODUCTS_PATH, store: guatemala }).flush(GT_PRODUCTS);
+    await settle(fixture);
+    expect(texts(fixture, '.store-picker__value')).toEqual(['Tienda Ciudad de Guatemala']);
+    expect(texts(fixture, '.cart-currency')).toEqual(['Precios en GTQ']);
+    expect(texts(fixture, '.product-card__amount')).toEqual(['Q\u00a015.00', 'Q\u00a05.00', 'Q\u00a04.00', 'Q\u00a03.50']);
+    expect(texts(fixture, '.product-card__tax')).toEqual(['Impuesto 12%', 'Impuesto 12%', 'Impuesto 12%', 'Impuesto 12%']);
+
+    // Peru: the request speaks for pe-alpha, and soles carry their code above the grid.
+    const lima = storeNamed('Tienda Lima');
+    expect(lima.tenantId).toBe('pe-alpha');
+    element(fixture, '.store-picker summary').click();
+    TestBed.tick();
+    button(fixture, lima.name).click();
+    TestBed.tick();
+    expectRequest({ method: 'GET', url: PRODUCTS_PATH, store: lima }).flush(PE_PRODUCTS);
+    await settle(fixture);
+    expect(texts(fixture, '.store-picker__value')).toEqual(['Tienda Lima']);
+    expect(texts(fixture, '.cart-currency')).toEqual(['Precios en PEN']);
+    expect(texts(fixture, '.product-card__amount')).toEqual(['PEN\u00a07.50', 'PEN\u00a02.50', 'PEN\u00a02.00', 'PEN\u00a01.80']);
+    expect(texts(fixture, '.product-card__tax')).toEqual(['Impuesto 18%', 'Impuesto 18%', 'Impuesto 18%', 'Impuesto 18%']);
   });
 
   it('shows a failed E-01 only on the cart of the store it was sent for', async () => {

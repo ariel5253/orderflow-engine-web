@@ -20,7 +20,7 @@
                   <ui-text class="order-item__date">{{ item.confirmedAt | dateTime }}</ui-text>
                 </span>
                 <ui-text class="order-item__total amount">{{
-                  'common.amountInCurrency' | translate: { amount: (item.total | money: history.currency), currency: history.currency }
+                  item.total | moneyCode: history.currency
                 }}</ui-text>
                 <svg class="order-item__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6" /></svg>
               </a>

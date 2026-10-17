@@ -58,7 +58,7 @@
         <div class="action-bar__total">
           <ui-text class="action-bar__total-label">{{ 'orderSummary.totals.total' | translate }}</ui-text>
           <ui-text class="action-bar__total-value amount">{{
-            'common.amountInCurrency' | translate: { amount: (order.totals.total | money: order.currency), currency: order.currency }
+            order.totals.total | moneyCode: order.currency
           }}</ui-text>
         </div>
         <a class="button-secondary" routerLink="/orders"><ui-text>{{ 'order.actions.history' | translate }}</ui-text></a>

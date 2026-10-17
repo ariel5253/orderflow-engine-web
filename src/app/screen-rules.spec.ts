@@ -6,14 +6,17 @@ import {
   ORDER,
   PRODUCTS,
   QUOTE,
+  STORES,
   SimulatedVisualViewport,
   backend,
+  button,
   element,
   expectRequest,
   historyUrl,
   navigate,
   openApp,
   settle,
+  storeNamed,
   texts,
 } from '../testing/app-harness';
 import longNames from '../testing/long-names.json';
@@ -71,6 +74,45 @@ const LONG_USD_HISTORY: OrderHistory = {
     { ...HISTORY.items[2], total: '0.60' },
   ],
 };
+
+/**
+ * The same cart in quetzales and in soles, for a seeded Guatemala and Peru store (data model §1): Intl gives each
+ * its own symbol, and the code above the grid names the currency in any case.
+ */
+interface ForeignCart {
+  readonly currency: string;
+  readonly storeName: string;
+  readonly tenantId: string;
+  readonly listPrices: readonly string[];
+  readonly taxRate: string;
+  readonly amounts: readonly string[];
+}
+
+const FOREIGN_CARTS: readonly ForeignCart[] = [
+  {
+    currency: 'GTQ',
+    storeName: 'Tienda Ciudad de Guatemala',
+    tenantId: 'gt-alpha',
+    listPrices: ['15.00', '5.00', '4.00', '3.50'],
+    taxRate: '0.120000',
+    amounts: ['Q\u00a015.00', 'Q\u00a05.00', 'Q\u00a04.00', 'Q\u00a03.50'],
+  },
+  {
+    currency: 'PEN',
+    storeName: 'Tienda Lima',
+    tenantId: 'pe-alpha',
+    listPrices: ['7.50', '2.50', '2.00', '1.80'],
+    taxRate: '0.180000',
+    amounts: ['PEN\u00a07.50', 'PEN\u00a02.50', 'PEN\u00a02.00', 'PEN\u00a01.80'],
+  },
+];
+
+function foreignProducts(cart: ForeignCart): ProductList {
+  return {
+    currency: cart.currency,
+    items: LONG_PRODUCTS.items.map((product, index) => ({ ...product, listPrice: cart.listPrices[index], taxRate: cart.taxRate })),
+  };
+}
 
 const VIEWPORTS: readonly (readonly [width: number, height: number])[] = [
   [768, 1024],
@@ -145,6 +187,48 @@ describe('screen rules on every screen (AC-42 ... AC-44)', () => {
 
       expect(texts(fixture, '.cart-currency')).toEqual(['Precios en USD']);
       expect(texts(fixture, '.product-card__amount')).toEqual(['$1.45', '$0.60', '$0.45', '$0.55']);
+      expectScreenRules(root, width, PRODUCTS.items.length);
+      expectTouchTargets(root);
+    });
+
+    for (const cart of FOREIGN_CARTS) {
+      it(`cart in ${cart.currency}: a ${cart.tenantId} store names its currency above the grid, at ${width} x ${height}`, async () => {
+        await page.viewport(width, height);
+        const fixture = await openApp('/cart');
+        expectRequest({ method: 'GET', url: '/api/v1/products' }).flush(PRODUCTS);
+        await settle(fixture);
+        element(fixture, '.store-picker summary').click();
+        TestBed.tick();
+        button(fixture, cart.storeName).click();
+        TestBed.tick();
+        const store = storeNamed(cart.storeName);
+        expectRequest({ method: 'GET', url: '/api/v1/products', store }).flush(foreignProducts(cart));
+        await settle(fixture);
+        expect(store.tenantId).toBe(cart.tenantId);
+        const root: HTMLElement = fixture.nativeElement;
+
+        expect(texts(fixture, '.store-picker__value')).toEqual([cart.storeName]);
+        expect(texts(fixture, '.cart-currency')).toEqual([`Precios en ${cart.currency}`]);
+        expect(texts(fixture, '.product-card__amount')).toEqual(cart.amounts);
+        expectScreenRules(root, width, PRODUCTS.items.length);
+        expectTouchTargets(root);
+      });
+    }
+
+    it(`store picker: open, the four seeded tenants and their stores are whole and selectable, at ${width} x ${height}`, async () => {
+      await page.viewport(width, height);
+      const fixture = await openApp('/cart');
+      expectRequest({ method: 'GET', url: '/api/v1/products' }).flush(LONG_PRODUCTS);
+      await settle(fixture);
+      element(fixture, '.store-picker summary').click();
+      await settle(fixture);
+      const root: HTMLElement = fixture.nativeElement;
+
+      expect(texts(fixture, '.store-picker__tenant')).toEqual(['co-alpha', 'ec-alpha', 'gt-alpha', 'pe-alpha']);
+      expect(texts(fixture, '.store-picker__option')).toEqual(STORES.map((store) => store.name));
+      const panel = element(fixture, '.store-picker__panel').getBoundingClientRect();
+      expect(panel.left).toBeGreaterThanOrEqual(0);
+      expect(panel.right).toBeLessThanOrEqual(width);
       expectScreenRules(root, width, PRODUCTS.items.length);
       expectTouchTargets(root);
     });
