@@ -1,0 +1,9 @@
+{
+  "currency": "COP",
+  "items": [
+    { "sku": "BEV-COLA-1500", "description": "Gaseosa cola 1,5 l", "listPrice": "5200", "taxRate": "0.190000" },
+    { "sku": "BEV-COLA-350", "description": "Gaseosa cola 350 ml", "listPrice": "2500", "taxRate": "0.190000" },
+    { "sku": "BEV-WATER-600", "description": "Agua 600 ml", "listPrice": "1500", "taxRate": "0.190000" },
+    { "sku": "SNK-CHIPS-45", "description": "Papas fritas 45 g", "listPrice": "1800", "taxRate": "0.050000" }
+  ]
+}

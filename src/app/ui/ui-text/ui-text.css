@@ -1,0 +1,10 @@
+/* Wraps anywhere, never truncates, grows vertically. min-width: 0 lets it shrink inside flex and grid tracks
+   instead of pushing them wider than the screen. */
+ui-text {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}

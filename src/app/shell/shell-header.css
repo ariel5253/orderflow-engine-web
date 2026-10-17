@@ -1,0 +1,116 @@
+/* Brand and language, then navigation and the store picker. Every row wraps; every control is at least 44 px. */
+:host {
+  display: block;
+}
+
+.shell-header {
+  border-bottom: 1px solid var(--ofe-border);
+  background: var(--ofe-surface);
+}
+
+/* The store picker's panel is placed against this box, so it never leaves the viewport. */
+.shell-header__inner {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofe-space-2);
+  width: 100%;
+  max-width: var(--ofe-content-max);
+  margin: 0 auto;
+  padding: var(--ofe-space-2) var(--ofe-space-3);
+}
+
+.shell-header__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ofe-space-2) var(--ofe-space-3);
+}
+
+.shell-header__row > * {
+  min-width: 0;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ofe-space-2);
+  min-height: 44px;
+  color: var(--ofe-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.brand__mark {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.language-switch {
+  display: inline-flex;
+  flex: none;
+  padding: 2px;
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-surface-sunken);
+}
+
+.language-switch__option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ofe-text-muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.language-switch__option[aria-pressed='true'] {
+  background: var(--ofe-surface);
+  color: var(--ofe-ink);
+  box-shadow: var(--ofe-shadow-1);
+}
+
+.shell-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ofe-space-1);
+}
+
+.shell-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--ofe-space-3);
+  border-radius: var(--ofe-radius);
+  color: var(--ofe-text-muted);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.shell-nav a.is-active {
+  background: var(--ofe-surface-sunken);
+  color: var(--ofe-ink);
+}
+
+.brand:focus-visible,
+.language-switch__option:focus-visible,
+.shell-nav a:focus-visible {
+  outline: 2px solid var(--ofe-focus);
+  outline-offset: 2px;
+}

@@ -1,0 +1,16 @@
+<section class="notice" [attr.data-tone]="tone()" [attr.role]="role()">
+  <svg class="notice__icon" viewBox="0 0 24 24" aria-hidden="true">
+    @for (stroke of icon(); track $index) {
+      <path [attr.d]="stroke" />
+    }
+  </svg>
+  <div class="notice__body">
+    <h2 class="notice__title"><ng-content select="[notice-title]" /></h2>
+    <p class="notice__detail"><ng-content select="[notice-detail]" /></p>
+    @if (actionLabel(); as label) {
+      <button type="button" class="notice__action" [disabled]="actionDisabled()" (click)="action.emit()">
+        <ui-text>{{ label }}</ui-text>
+      </button>
+    }
+  </div>
+</section>

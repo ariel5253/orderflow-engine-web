@@ -1,0 +1,26 @@
+# Serves the built client and forwards /api/ to the API, so the browser sees one origin and the API needs no CORS.
+# The nginx image renders this template when the container starts: only defined environment variables are replaced
+# (API_UPSTREAM), so nginx's own variables stay as they are.
+server {
+    listen 8080;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # No URI after the upstream: /api/v1/... reaches the API unchanged, with its request and response headers.
+    location /api/ {
+        proxy_pass ${API_UPSTREAM};
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Client routes (/quotes/:quoteId) fall back to the application, so a reload works.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location = /index.html {
+        add_header Cache-Control "no-cache";
+    }
+}

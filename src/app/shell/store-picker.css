@@ -1,0 +1,103 @@
+/* A disclosure: the selected store's whole name when closed, the stores by tenant when open. Nothing is cut. */
+:host {
+  display: block;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.store-picker__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--ofe-space-2);
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: var(--ofe-space-1) var(--ofe-space-3);
+  border: 1px solid var(--ofe-border-strong);
+  border-radius: var(--ofe-radius);
+  cursor: pointer;
+  list-style: none;
+}
+
+.store-picker__summary::-webkit-details-marker {
+  display: none;
+}
+
+.store-picker__summary:focus-visible,
+.store-picker__option:focus-visible {
+  outline: 2px solid var(--ofe-focus);
+  outline-offset: 2px;
+}
+
+.store-picker__label {
+  color: var(--ofe-text-subtle);
+  font-size: 12px;
+}
+
+.store-picker__value {
+  flex: 1 1 0;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.store-picker__chevron {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.store-picker[open] .store-picker__chevron {
+  transform: rotate(180deg);
+}
+
+/* Placed against the shell header, at its right edge and never wider than it, so it stays inside the viewport. */
+.store-picker__panel {
+  position: absolute;
+  top: calc(100% - var(--ofe-space-1));
+  right: var(--ofe-space-3);
+  z-index: 20;
+  box-sizing: border-box;
+  width: min(360px, calc(100% - 2 * var(--ofe-space-3)));
+  padding: var(--ofe-space-2);
+  border: 1px solid var(--ofe-border);
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-surface);
+  box-shadow: var(--ofe-shadow-1), 0 10px 15px -3px rgba(15, 23, 42, 0.08);
+}
+
+.store-picker__group + .store-picker__group {
+  margin-top: var(--ofe-space-2);
+}
+
+.store-picker__tenant {
+  padding: var(--ofe-space-1) var(--ofe-space-2);
+}
+
+.store-picker__option {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: var(--ofe-space-2);
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ofe-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.store-picker__option:hover {
+  background: var(--ofe-page);
+}
+
+.store-picker__option[aria-pressed='true'] {
+  background: var(--ofe-surface-sunken);
+  font-weight: 600;
+}

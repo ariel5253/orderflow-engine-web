@@ -1,0 +1,169 @@
+{
+  "app": {
+    "formatLocale": "en"
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Retry"
+  },
+  "problem": {
+    "meta": "Code {{code}} · Ref. {{ref}}",
+    "network": {
+      "title": "We could not reach the server",
+      "detail": "Check your connection and try again."
+    }
+  },
+  "shell": {
+    "brand": "Orderflow",
+    "language": {
+      "label": "Language",
+      "es": "ES",
+      "en": "EN"
+    },
+    "languageName": {
+      "es": "Español",
+      "en": "English"
+    },
+    "nav": {
+      "label": "Main navigation",
+      "shop": "Shop",
+      "orders": "My orders"
+    },
+    "store": {
+      "label": "Store"
+    }
+  },
+  "paymentMethod": {
+    "CASH": "Cash",
+    "CREDIT": "Credit"
+  },
+  "cart": {
+    "title": "Shop",
+    "subtitle": "List prices, before taxes. Discounts, taxes and the total come with the quote.",
+    "currency": "Prices in {{currency}}",
+    "productTax": "Tax {{rate}}",
+    "quantity": "Quantity of {{name}}",
+    "decrease": "Remove one unit of {{name}}",
+    "increase": "Add one unit of {{name}}",
+    "payment": "Payment method",
+    "units": {
+      "one": "{{count}} unit",
+      "other": "{{count}} units"
+    },
+    "empty": "Add products to get a quote",
+    "actions": {
+      "quote": "Get quote",
+      "quoting": "Getting quote…",
+      "review": "Review cart"
+    }
+  },
+  "orderSummary": {
+    "title": "Order summary",
+    "quote": "Quote {{id}}",
+    "status": {
+      "OPEN": "Open",
+      "CONFIRMED": "Confirmed",
+      "EXPIRED": "Expired"
+    },
+    "expiresAt": "Price held until {{time}}",
+    "lines": {
+      "title": "Products",
+      "one": "{{count}} line",
+      "other": "{{count}} lines"
+    },
+    "line": {
+      "qtyTimesPrice": "{{qty}} × {{price}}",
+      "gross": "Gross",
+      "comboShare": "Combo share",
+      "comboShareHint": "Already part of the order's combo discount",
+      "net": "Net",
+      "taxableBase": "Taxable base",
+      "tax": "Tax ({{rate}})"
+    },
+    "gift": {
+      "badge": "Gift × {{qty}}",
+      "free": "Free",
+      "referenceValue": "Reference value",
+      "taxNote": "The customer pays the gift's tax"
+    },
+    "origin": {
+      "TIER": "Volume discount",
+      "COMBO": "Combo"
+    },
+    "totals": {
+      "title": "Totals",
+      "currency": "Amounts in {{currency}}",
+      "grossSubtotal": "Gross subtotal",
+      "discounts": "Discounts",
+      "gifts": "Gifts",
+      "giftItem": "{{name}} × {{qty}}",
+      "taxableBase": "Taxable base",
+      "taxes": "Taxes",
+      "total": "Total"
+    },
+    "credit": {
+      "title": "Paid on credit",
+      "available": "Available credit",
+      "fits": "The order fits your credit",
+      "short": "You are {{amount}} short",
+      "shortfall": "Shortfall",
+      "advisory": "Advisory only: credit is used only when you confirm"
+    },
+    "actions": {
+      "confirm": "Confirm order"
+    }
+  },
+  "quote": {
+    "short": {
+      "title": "The order does not fit your credit",
+      "detail": "It exceeds your available credit by {{amount}}. You can pay cash instead."
+    },
+    "expired": {
+      "title": "The quote expired",
+      "detail": "The price was held until {{time}}. Quote again to see current prices."
+    },
+    "confirmed": {
+      "title": "This quote is already an order",
+      "detail": "A quote is confirmed only once."
+    },
+    "actions": {
+      "confirming": "Confirming…",
+      "edit": "Edit cart",
+      "payCash": "Pay cash",
+      "requote": "Quote again",
+      "viewOrder": "View order {{number}}"
+    }
+  },
+  "order": {
+    "heading": "Order",
+    "title": "Order {{number}}",
+    "status": {
+      "CONFIRMED": "Confirmed"
+    },
+    "confirmedAt": "Confirmed on {{time}}",
+    "payment": "Payment: {{method}}",
+    "created": {
+      "title": "Order confirmed",
+      "detail": "Your order number is {{number}}."
+    },
+    "replayed": {
+      "title": "This order was already recorded",
+      "detail": "We received the same confirmation again: no second order was created and no more credit was used."
+    },
+    "actions": {
+      "continue": "Keep shopping",
+      "history": "View my orders"
+    }
+  },
+  "history": {
+    "title": "My orders",
+    "subtitle": "Newest first",
+    "empty": {
+      "title": "You have no orders yet",
+      "detail": "Confirmed orders appear here."
+    },
+    "actions": {
+      "shop": "Go shopping"
+    }
+  }
+}

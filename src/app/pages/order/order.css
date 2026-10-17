@@ -1,0 +1,4 @@
+/* The order shares the layout and the breakdown of the summary; it adds nothing of its own to them. */
+:host {
+  display: block;
+}

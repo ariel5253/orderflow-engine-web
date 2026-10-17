@@ -1,0 +1,24 @@
+<details class="store-picker" #disclosure (keydown.escape)="close(disclosure)">
+  <summary class="store-picker__summary">
+    <ui-text class="store-picker__label">{{ 'shell.store.label' | translate }}</ui-text>
+    <ui-text class="store-picker__value">{{ current().name }}</ui-text>
+    <svg class="store-picker__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+  </summary>
+  <div class="store-picker__panel">
+    @for (group of groups(); track group.tenantId) {
+      <div class="store-picker__group" role="group" [attr.aria-label]="group.tenantId">
+        <ui-text class="store-picker__tenant code">{{ group.tenantId }}</ui-text>
+        @for (store of group.stores; track storeKey(store)) {
+          <button
+            type="button"
+            class="store-picker__option"
+            [attr.aria-pressed]="isCurrent(store)"
+            (click)="choose(store, disclosure)"
+          >
+            <ui-text>{{ store.name }}</ui-text>
+          </button>
+        }
+      </div>
+    }
+  </div>
+</details>

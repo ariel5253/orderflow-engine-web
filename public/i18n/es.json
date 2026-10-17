@@ -1,0 +1,169 @@
+{
+  "app": {
+    "formatLocale": "es-419"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "retry": "Reintentar"
+  },
+  "problem": {
+    "meta": "Código {{code}} · Ref. {{ref}}",
+    "network": {
+      "title": "No pudimos comunicarnos con el servidor",
+      "detail": "Revisa tu conexión e inténtalo de nuevo."
+    }
+  },
+  "shell": {
+    "brand": "Orderflow",
+    "language": {
+      "label": "Idioma",
+      "es": "ES",
+      "en": "EN"
+    },
+    "languageName": {
+      "es": "Español",
+      "en": "English"
+    },
+    "nav": {
+      "label": "Navegación principal",
+      "shop": "Comprar",
+      "orders": "Mis pedidos"
+    },
+    "store": {
+      "label": "Tienda"
+    }
+  },
+  "paymentMethod": {
+    "CASH": "Contado",
+    "CREDIT": "Crédito"
+  },
+  "cart": {
+    "title": "Comprar",
+    "subtitle": "Precios de lista, sin impuestos. Los descuentos, los impuestos y el total llegan con la cotización.",
+    "currency": "Precios en {{currency}}",
+    "productTax": "Impuesto {{rate}}",
+    "quantity": "Cantidad de {{name}}",
+    "decrease": "Quitar una unidad de {{name}}",
+    "increase": "Agregar una unidad de {{name}}",
+    "payment": "Forma de pago",
+    "units": {
+      "one": "{{count}} unidad",
+      "other": "{{count}} unidades"
+    },
+    "empty": "Agrega productos para cotizar",
+    "actions": {
+      "quote": "Cotizar",
+      "quoting": "Cotizando…",
+      "review": "Revisar carrito"
+    }
+  },
+  "orderSummary": {
+    "title": "Resumen del pedido",
+    "quote": "Cotización {{id}}",
+    "status": {
+      "OPEN": "Abierta",
+      "CONFIRMED": "Confirmada",
+      "EXPIRED": "Vencida"
+    },
+    "expiresAt": "Precio garantizado hasta {{time}}",
+    "lines": {
+      "title": "Productos",
+      "one": "{{count}} línea",
+      "other": "{{count}} líneas"
+    },
+    "line": {
+      "qtyTimesPrice": "{{qty}} × {{price}}",
+      "gross": "Bruto",
+      "comboShare": "Parte del combo",
+      "comboShareHint": "Ya está dentro del descuento del combo del pedido",
+      "net": "Neto",
+      "taxableBase": "Base gravable",
+      "tax": "Impuesto ({{rate}})"
+    },
+    "gift": {
+      "badge": "Obsequio × {{qty}}",
+      "free": "Sin costo",
+      "referenceValue": "Valor de referencia",
+      "taxNote": "El impuesto del obsequio lo paga el cliente"
+    },
+    "origin": {
+      "TIER": "Descuento por volumen",
+      "COMBO": "Combo"
+    },
+    "totals": {
+      "title": "Totales",
+      "currency": "Valores en {{currency}}",
+      "grossSubtotal": "Subtotal bruto",
+      "discounts": "Descuentos",
+      "gifts": "Obsequios",
+      "giftItem": "{{name}} × {{qty}}",
+      "taxableBase": "Base gravable",
+      "taxes": "Impuestos",
+      "total": "Total"
+    },
+    "credit": {
+      "title": "Pago a crédito",
+      "available": "Cupo disponible",
+      "fits": "El pedido cabe en tu cupo",
+      "short": "Te faltan {{amount}} de cupo",
+      "shortfall": "Faltante",
+      "advisory": "Es una consulta: el cupo se descuenta solo al confirmar"
+    },
+    "actions": {
+      "confirm": "Confirmar pedido"
+    }
+  },
+  "quote": {
+    "short": {
+      "title": "El pedido no cabe en tu cupo",
+      "detail": "Supera tu cupo disponible en {{amount}}. Puedes pagarlo de contado."
+    },
+    "expired": {
+      "title": "La cotización venció",
+      "detail": "El precio se garantizaba hasta {{time}}. Vuelve a cotizar para ver los precios vigentes."
+    },
+    "confirmed": {
+      "title": "Esta cotización ya es un pedido",
+      "detail": "Una cotización se confirma una sola vez."
+    },
+    "actions": {
+      "confirming": "Confirmando…",
+      "edit": "Modificar carrito",
+      "payCash": "Pagar de contado",
+      "requote": "Volver a cotizar",
+      "viewOrder": "Ver pedido {{number}}"
+    }
+  },
+  "order": {
+    "heading": "Pedido",
+    "title": "Pedido {{number}}",
+    "status": {
+      "CONFIRMED": "Confirmado"
+    },
+    "confirmedAt": "Confirmado el {{time}}",
+    "payment": "Pago: {{method}}",
+    "created": {
+      "title": "Pedido confirmado",
+      "detail": "Tu número de pedido es {{number}}."
+    },
+    "replayed": {
+      "title": "Este pedido ya estaba registrado",
+      "detail": "Recibimos la misma confirmación otra vez: no se creó otro pedido ni se usó más cupo."
+    },
+    "actions": {
+      "continue": "Seguir comprando",
+      "history": "Ver mis pedidos"
+    }
+  },
+  "history": {
+    "title": "Mis pedidos",
+    "subtitle": "Del más reciente al más antiguo",
+    "empty": {
+      "title": "Aún no tienes pedidos",
+      "detail": "Cuando confirmes un pedido, aparecerá aquí."
+    },
+    "actions": {
+      "shop": "Ir a comprar"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+<header class="shell-header">
+  <div class="shell-header__inner">
+    <div class="shell-header__row">
+      <a class="brand" routerLink="/cart">
+        <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h10l-3-3" />
+          <path d="M20 17H10l3 3" />
+          <path d="M14 7a5 5 0 0 1 0 10" />
+        </svg>
+        <ui-text>{{ 'shell.brand' | translate }}</ui-text>
+      </a>
+      <div class="language-switch" role="group" [attr.aria-label]="'shell.language.label' | translate">
+        @for (language of languages; track language) {
+          <button
+            type="button"
+            class="language-switch__option"
+            [attr.lang]="language"
+            [attr.aria-pressed]="isActive(language)"
+            [attr.aria-label]="languageNameKey(language) | translate"
+            (click)="use(language)"
+          >
+            <ui-text>{{ languageKey(language) | translate }}</ui-text>
+          </button>
+        }
+      </div>
+    </div>
+    <div class="shell-header__row">
+      <nav class="shell-nav" [attr.aria-label]="'shell.nav.label' | translate">
+        <a routerLink="/cart" routerLinkActive="is-active" ariaCurrentWhenActive="page">
+          <ui-text>{{ 'shell.nav.shop' | translate }}</ui-text>
+        </a>
+        <a routerLink="/orders" routerLinkActive="is-active" ariaCurrentWhenActive="page">
+          <ui-text>{{ 'shell.nav.orders' | translate }}</ui-text>
+        </a>
+      </nav>
+      <app-store-picker />
+    </div>
+  </div>
+</header>

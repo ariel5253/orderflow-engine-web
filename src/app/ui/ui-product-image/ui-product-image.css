@@ -1,0 +1,18 @@
+/* One aspect ratio for every product image; the picture is contained, never cropped or stretched. */
+ui-product-image {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  aspect-ratio: var(--ofe-image-ratio);
+  padding: 6px;
+  overflow: hidden;
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-surface-sunken);
+}
+
+ui-product-image > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}

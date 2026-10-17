@@ -1,0 +1,157 @@
+/* The lines of a breakdown. Text, product images and amounts keep their own rules in their components. */
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.line__meta > * {
+  min-width: 0;
+}
+
+/* A line. Phone: the image beside the name, the breakdown across the card. From 640 px the image keeps its column.
+   The name and the net share a row, and the net moves under the name when the row is tight. */
+.line {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-areas:
+    'image top'
+    'details details'
+    'note note';
+  gap: var(--ofe-space-2) var(--ofe-space-3);
+  padding: var(--ofe-space-3);
+  border-top: 1px solid var(--ofe-border);
+}
+
+.line > ui-product-image {
+  grid-area: image;
+  align-self: start;
+}
+
+.line > .line__top {
+  grid-area: top;
+  min-width: 0;
+}
+
+.line > .breakdown {
+  grid-area: details;
+}
+
+.line > .line__note {
+  grid-area: note;
+}
+
+.line--gift {
+  background: var(--ofe-gift-row);
+}
+
+.line__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--ofe-space-2) var(--ofe-space-3);
+}
+
+.line__identity {
+  display: flex;
+  flex: 1 1 240px;
+  flex-direction: column;
+  gap: var(--ofe-space-1);
+  min-width: 0;
+}
+
+.line__name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.line__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ofe-space-1) var(--ofe-space-2);
+  color: var(--ofe-text-muted);
+}
+
+/* The net never shrinks: when the row is tight it moves under the name instead of splitting. */
+.line__headline {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.line__headline-label {
+  color: var(--ofe-text-subtle);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.line__headline-value {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.line__headline-value--free {
+  color: var(--ofe-success-ink);
+}
+
+/* On a phone the net reads as one row under the name: label left, amount right. */
+@media (max-width: 639px) {
+  .line__headline {
+    flex: 1 1 100%;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ofe-space-3);
+  }
+}
+
+@media (min-width: 640px) {
+  .line {
+    grid-template-columns: 88px minmax(0, 1fr);
+    grid-template-areas:
+      'image top'
+      '. details'
+      '. note';
+  }
+}
+
+/* The breakdown rows: the label wraps; the amount sits in an auto column sized to fit it. */
+.breakdown {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--ofe-space-1) var(--ofe-space-3);
+  padding: var(--ofe-space-2) var(--ofe-space-3);
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-page);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.breakdown dt {
+  min-width: 0;
+  color: var(--ofe-text-muted);
+}
+
+.breakdown dd {
+  font-variant-numeric: tabular-nums lining-nums;
+  text-align: right;
+}
+
+.breakdown .is-discount {
+  color: var(--ofe-success-ink);
+}
+
+.breakdown .is-share {
+  color: var(--ofe-text-subtle);
+}
+
+.breakdown .is-strong {
+  color: var(--ofe-ink);
+  font-weight: 600;
+}

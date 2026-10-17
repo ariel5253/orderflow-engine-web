@@ -1,0 +1,86 @@
+@let body = breakdown();
+@let lineCount = body.lines.length;
+<section class="card" aria-labelledby="lines-title">
+  <div class="card__header">
+    <h2 class="card__title" id="lines-title"><ui-text>{{ 'orderSummary.lines.title' | translate }}</ui-text></h2>
+    <ui-text class="card__subtitle">{{ linesKey(lineCount) | translate: { count: (lineCount | count) } }}</ui-text>
+  </div>
+  <ul>
+    @for (line of body.lines; track $index) {
+      <li class="line" [class.line--gift]="line.isGift">
+        <ui-product-image [sku]="line.sku" />
+        <div class="line__top">
+          <div class="line__identity">
+            <h3 class="line__name"><ui-text>{{ line.description }}</ui-text></h3>
+            <div class="line__meta">
+              <ui-text class="code">{{ line.sku }}</ui-text>
+              @if (line.isGift) {
+                <span class="chip chip--gift">
+                  <ui-text>{{ 'orderSummary.gift.badge' | translate: { qty: (line.qty | count) } }}</ui-text>
+                </span>
+                <ui-text class="code">{{ line.origin }}</ui-text>
+              } @else {
+                <ui-text class="line__qty">
+                  {{
+                    'orderSummary.line.qtyTimesPrice'
+                      | translate: { qty: (line.qty | count), price: (line.unitPrice | money: body.currency) }
+                  }}
+                </ui-text>
+              }
+            </div>
+          </div>
+          <div class="line__headline">
+            <ui-text class="line__headline-label">{{ 'orderSummary.line.net' | translate }}</ui-text>
+            @if (line.isGift) {
+              <ui-text class="line__headline-value line__headline-value--free">
+                {{ 'orderSummary.gift.free' | translate }}
+              </ui-text>
+            } @else {
+              <ui-text class="line__headline-value amount">{{ line.net | money: body.currency }}</ui-text>
+            }
+          </div>
+        </div>
+        <dl class="breakdown">
+          @if (line.isGift) {
+            @if (line.referenceValue; as referenceValue) {
+              <dt><ui-text>{{ 'orderSummary.gift.referenceValue' | translate }}</ui-text></dt>
+              <dd><ui-text class="amount">{{ referenceValue | money: body.currency }}</ui-text></dd>
+            }
+          } @else {
+            <dt><ui-text>{{ 'orderSummary.line.gross' | translate }}</ui-text></dt>
+            <dd><ui-text class="amount">{{ line.gross | money: body.currency }}</ui-text></dd>
+            @for (discount of line.discounts; track discount.origin) {
+              <dt class="is-discount">
+                <ui-text>{{ originKey(discount.origin) | translate }}</ui-text>
+                <ui-text class="code">{{ discount.origin }}</ui-text>
+              </dt>
+              <dd class="is-discount">
+                <ui-text class="amount">{{ discount.amount | money: body.currency : 'negative' }}</ui-text>
+              </dd>
+            }
+            <!-- A combo allocation only explains this line's base; it is never shown as a discount (A-07). -->
+            @for (share of line.comboAllocations; track share.comboId) {
+              <dt class="is-share">
+                <ui-text>{{ 'orderSummary.line.comboShare' | translate }}</ui-text>
+                <ui-text class="code">{{ comboOrigin(share.comboId) }}</ui-text>
+                <ui-text class="note">{{ 'orderSummary.line.comboShareHint' | translate }}</ui-text>
+              </dt>
+              <dd class="is-share">
+                <ui-text class="amount">{{ share.amount | money: body.currency : 'negative' }}</ui-text>
+              </dd>
+            }
+          }
+          <dt class="is-strong"><ui-text>{{ 'orderSummary.line.taxableBase' | translate }}</ui-text></dt>
+          <dd class="is-strong"><ui-text class="amount">{{ line.taxableBase | money: body.currency }}</ui-text></dd>
+          <dt class="is-tax">
+            <ui-text>{{ 'orderSummary.line.tax' | translate: { rate: (line.taxRate | rate) } }}</ui-text>
+          </dt>
+          <dd class="is-tax"><ui-text class="amount">{{ line.tax | money: body.currency }}</ui-text></dd>
+        </dl>
+        @if (line.isGift && !isZero(line.tax)) {
+          <p class="note line__note"><ui-text>{{ 'orderSummary.gift.taxNote' | translate }}</ui-text></p>
+        }
+      </li>
+    }
+  </ul>
+</section>

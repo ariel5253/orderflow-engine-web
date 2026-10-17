@@ -1,0 +1,31 @@
+/* The summary's own parts: the credit position. The layout, the breakdown and the action bar keep their own rules. */
+.credit-status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ofe-space-2);
+  padding: var(--ofe-space-2) var(--ofe-space-3);
+  border-radius: var(--ofe-radius);
+  font-weight: 600;
+}
+
+.credit-status--fits {
+  background: var(--ofe-success-bg);
+  color: var(--ofe-success-ink);
+}
+
+.credit-status--short {
+  background: var(--ofe-danger-bg);
+  color: var(--ofe-danger-ink);
+}
+
+.credit-status svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

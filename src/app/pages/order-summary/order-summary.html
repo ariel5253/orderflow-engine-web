@@ -1,0 +1,158 @@
+<div class="page">
+  <app-shell-header />
+
+  <header class="page-header">
+    <div class="page-header__inner">
+      <h1 class="page-title"><ui-text>{{ 'orderSummary.title' | translate }}</ui-text></h1>
+      @if (quote(); as quote) {
+        <div class="page-meta">
+          <span class="chip chip--status" [attr.data-status]="quote.status">
+            <ui-text>{{ statusKey(quote.status) | translate }}</ui-text>
+          </span>
+          <ui-text>{{ 'orderSummary.expiresAt' | translate: { time: (quote.expiresAt | dateTime) } }}</ui-text>
+          <ui-text class="code">{{ 'orderSummary.quote' | translate: { id: quote.quoteId } }}</ui-text>
+        </div>
+      }
+    </div>
+  </header>
+
+  <main class="page-main page-main--breakdown">
+    @if (quote(); as quote) {
+      @if (confirmFailure(); as failure) {
+        @let wayOut = confirmationWayOut(failure);
+        <ui-problem-notice
+          #confirmNotice
+          class="page-notice"
+          [failure]="failure"
+          [actionLabel]="actionKey(wayOut) | translate: actionParams(failure)"
+          [actionDisabled]="busy()"
+          (action)="onConfirmFailure(quote, failure)"
+        />
+      } @else if (short()) {
+        <ui-notice
+          class="page-notice quote-state"
+          tone="warning"
+          [actionLabel]="'quote.actions.payCash' | translate"
+          [actionDisabled]="busy()"
+          (action)="payCash(quote)"
+        >
+          <ui-text notice-title>{{ 'quote.short.title' | translate }}</ui-text>
+          <ui-text notice-detail>
+            {{ 'quote.short.detail' | translate: { amount: (quote.credit!.shortfall | money: quote.currency) } }}
+          </ui-text>
+        </ui-notice>
+      } @else if (expired()) {
+        <ui-notice
+          class="page-notice quote-state"
+          tone="warning"
+          [actionLabel]="'quote.actions.requote' | translate"
+          [actionDisabled]="busy()"
+          (action)="quoteAgain(quote)"
+        >
+          <ui-text notice-title>{{ 'quote.expired.title' | translate }}</ui-text>
+          <ui-text notice-detail>{{ 'quote.expired.detail' | translate: { time: (quote.expiresAt | dateTime) } }}</ui-text>
+        </ui-notice>
+      } @else if (confirmed()) {
+        @if (knownOrder(); as order) {
+          <ui-notice
+            class="page-notice quote-state"
+            tone="info"
+            [actionLabel]="'quote.actions.viewOrder' | translate: { number: order.orderNumber }"
+            (action)="viewOrder(order.orderId)"
+          >
+            <ui-text notice-title>{{ 'quote.confirmed.title' | translate }}</ui-text>
+            <ui-text notice-detail>{{ 'quote.confirmed.detail' | translate }}</ui-text>
+          </ui-notice>
+        } @else {
+          <ui-notice
+            class="page-notice quote-state"
+            tone="info"
+            [actionLabel]="'order.actions.history' | translate"
+            (action)="viewHistory()"
+          >
+            <ui-text notice-title>{{ 'quote.confirmed.title' | translate }}</ui-text>
+            <ui-text notice-detail>{{ 'quote.confirmed.detail' | translate }}</ui-text>
+          </ui-notice>
+        }
+      }
+
+      <app-breakdown-lines [breakdown]="quote" />
+
+      <div class="summary-column">
+        <app-breakdown-totals [breakdown]="quote" />
+
+        @if (quote.credit; as credit) {
+          <section class="card credit" aria-labelledby="credit-title">
+            <div class="card__header">
+              <h2 class="card__title" id="credit-title"><ui-text>{{ 'orderSummary.credit.title' | translate }}</ui-text></h2>
+            </div>
+            <div class="card__body">
+              <dl class="totals">
+                <dt><ui-text>{{ 'orderSummary.credit.available' | translate }}</ui-text></dt>
+                <dd><ui-text class="amount">{{ credit.available | money: quote.currency }}</ui-text></dd>
+                @if (!credit.fits) {
+                  <dt class="is-total"><ui-text>{{ 'orderSummary.credit.shortfall' | translate }}</ui-text></dt>
+                  <dd class="is-total"><ui-text class="amount">{{ credit.shortfall | money: quote.currency }}</ui-text></dd>
+                }
+              </dl>
+              @if (credit.fits) {
+                <p class="credit-status credit-status--fits">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M22 11.1V12a10 10 0 1 1-5.9-9.1" />
+                    <path d="M22 4 12 14l-3-3" />
+                  </svg>
+                  <ui-text>{{ 'orderSummary.credit.fits' | translate }}</ui-text>
+                </p>
+              } @else {
+                <p class="credit-status credit-status--short">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" />
+                    <path d="M12 8v4" />
+                    <path d="M12 16h.01" />
+                  </svg>
+                  <ui-text>
+                    {{ 'orderSummary.credit.short' | translate: { amount: (credit.shortfall | money: quote.currency) } }}
+                  </ui-text>
+                </p>
+              }
+              <p class="note"><ui-text>{{ 'orderSummary.credit.advisory' | translate }}</ui-text></p>
+            </div>
+          </section>
+        }
+      </div>
+    } @else if (failure(); as failure) {
+      @let wayOut = loadWayOut(failure);
+      <ui-problem-notice
+        class="page-notice"
+        [failure]="failure"
+        [actionLabel]="actionKey(wayOut) | translate"
+        (action)="onLoadFailure(failure)"
+      />
+    } @else {
+      <p class="page-loading" aria-live="polite"><ui-text>{{ 'common.loading' | translate }}</ui-text></p>
+    }
+  </main>
+
+  @if (quote(); as quote) {
+    <ui-action-bar>
+      <div class="action-bar__inner">
+        <div class="action-bar__total">
+          <ui-text class="action-bar__total-label">{{ 'orderSummary.totals.total' | translate }}</ui-text>
+          <ui-text class="action-bar__total-value amount">{{
+            quote.totals.total | moneyCode: quote.currency
+          }}</ui-text>
+        </div>
+        <button type="button" class="button-secondary" [disabled]="busy()" (click)="editCart(quote)">
+          <ui-text>{{ 'quote.actions.edit' | translate }}</ui-text>
+        </button>
+        <button type="button" class="button-primary" [disabled]="!canConfirm()" (click)="confirm(quote)">
+          @if (confirming()) {
+            <ui-text>{{ 'quote.actions.confirming' | translate }}</ui-text>
+          } @else {
+            <ui-text>{{ 'orderSummary.actions.confirm' | translate }}</ui-text>
+          }
+        </button>
+      </div>
+    </ui-action-bar>
+  }
+</div>
