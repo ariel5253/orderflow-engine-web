@@ -5,7 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, map, of } from 'rxjs';
 import { NoticeAction, actionKey } from '../../core/dictionary-keys';
 import { DateTimePipe } from '../../core/format';
-import { MoneyPipe } from '../../core/money.pipe';
+import { MoneyCodePipe, MoneyPipe } from '../../core/money.pipe';
 import { OrderApi, OrderHistory } from '../../core/order-api';
 import { ApiFailure, isRetryable, toApiFailure } from '../../core/problem';
 import { Store, StoreContext } from '../../core/store-context';
@@ -35,7 +35,7 @@ export function historyWayOut(failure: ApiFailure): NoticeAction {
  */
 @Component({
   selector: 'app-history',
-  imports: [ShellHeader, RouterLink, UiText, UiActionBar, UiProblemNotice, TranslatePipe, MoneyPipe, DateTimePipe],
+  imports: [ShellHeader, RouterLink, UiText, UiActionBar, UiProblemNotice, TranslatePipe, MoneyPipe, MoneyCodePipe, DateTimePipe],
   templateUrl: './history.html',
   styleUrl: './history.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

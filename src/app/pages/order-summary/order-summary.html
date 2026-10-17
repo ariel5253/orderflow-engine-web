@@ -139,7 +139,7 @@
         <div class="action-bar__total">
           <ui-text class="action-bar__total-label">{{ 'orderSummary.totals.total' | translate }}</ui-text>
           <ui-text class="action-bar__total-value amount">{{
-            'common.amountInCurrency' | translate: { amount: (quote.totals.total | money: quote.currency), currency: quote.currency }
+            quote.totals.total | moneyCode: quote.currency
           }}</ui-text>
         </div>
         <button type="button" class="button-secondary" [disabled]="busy()" (click)="editCart(quote)">

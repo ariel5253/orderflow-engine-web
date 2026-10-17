@@ -103,12 +103,16 @@ describe('apiHeadersInterceptor', () => {
 });
 
 describe('stores.json', () => {
-  it('lists the seeded demo stores, the first one a co-alpha customer with credit', () => {
+  it('lists the seeded demo stores of the four tenants, grouped by tenant, the first one a co-alpha customer with credit', () => {
     expect(stores.map((store) => `${store.tenantId}/${store.customerId}`)).toEqual([
       'co-alpha/01a13cdb-cc00-7001-8001-000000000001',
       'co-alpha/01a13cdb-cc00-7001-8001-000000000002',
       'ec-alpha/01a13cdb-cc00-7002-8001-000000000001',
       'ec-alpha/01a13cdb-cc00-7002-8001-000000000002',
+      'gt-alpha/01a13cdb-cc00-7003-8001-000000000001',
+      'gt-alpha/01a13cdb-cc00-7003-8001-000000000002',
+      'pe-alpha/01a13cdb-cc00-7004-8001-000000000001',
+      'pe-alpha/01a13cdb-cc00-7004-8001-000000000002',
     ]);
   });
 });

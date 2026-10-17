@@ -22,7 +22,7 @@ import { ConfirmationOutcomes } from '../../core/confirmation-outcome';
 import { NoticeAction, actionKey, statusKey } from '../../core/dictionary-keys';
 import { DateTimePipe } from '../../core/format';
 import { IdempotencyKeys } from '../../core/idempotency-keys';
-import { MoneyPipe } from '../../core/money.pipe';
+import { MoneyCodePipe, MoneyPipe } from '../../core/money.pipe';
 import { OrderApi } from '../../core/order-api';
 import { ApiFailure, isRetryable, toApiFailure } from '../../core/problem';
 import { PaymentMethod, Quote, QuoteApi, paidLines } from '../../core/quote-api';
@@ -73,6 +73,7 @@ export function confirmationWayOut(failure: ApiFailure): NoticeAction {
     UiProblemNotice,
     TranslatePipe,
     MoneyPipe,
+    MoneyCodePipe,
     DateTimePipe,
   ],
   templateUrl: './order-summary.html',

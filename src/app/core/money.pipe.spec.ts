@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideTestTranslations } from '../../testing/translations';
 import { Language } from './language';
-import { MoneyPipe, formatMoney } from './money.pipe';
+import { MoneyPipe, formatMoney, formatMoneyWithCode } from './money.pipe';
 
 describe('money pipe', () => {
   const cases: readonly [locale: string, currency: string, amount: string, expected: string][] = [
@@ -14,6 +14,13 @@ describe('money pipe', () => {
     ['es-419', 'USD', '0.60', '$0.60'],
     ['en', 'USD', '77.11', '$77.11'],
     ['en', 'USD', '0.60', '$0.60'],
+    // Quetzales and soles at scale 2: the code is the only input, so no currency is named in the client (P-07).
+    ['es-419', 'GTQ', '1234.50', 'Q\u00a01,234.50'],
+    ['es-419', 'GTQ', '3.50', 'Q\u00a03.50'],
+    ['en', 'GTQ', '1234.50', 'Q\u00a01,234.50'],
+    ['es-419', 'PEN', '1234.50', 'PEN\u00a01,234.50'],
+    ['es-419', 'PEN', '1.80', 'PEN\u00a01.80'],
+    ['en', 'PEN', '1234.50', 'PEN\u00a01,234.50'],
   ];
 
   for (const [locale, currency, amount, expected] of cases) {
@@ -72,4 +79,23 @@ describe('money pipe', () => {
   it('formats COP at scale 0 in English too', async () => {
     expect(await render('en', '115647', 'COP')).toEqual(['$115,647', '-$115,647']);
   });
+});
+
+describe('money with its currency code (SPEC §10.3)', () => {
+  const cases: readonly [locale: string, currency: string, amount: string, expected: string][] = [
+    ['es-419', 'COP', '87534', '$87,534\u00a0COP'],
+    ['en', 'USD', '77.11', '$77.11\u00a0USD'],
+    ['es-419', 'GTQ', '25.00', 'Q\u00a025.00\u00a0GTQ'],
+    // Intl writes PEN with its code, so the code is not repeated.
+    ['es-419', 'PEN', '25.37', 'PEN\u00a025.37'],
+    ['en', 'PEN', '25.37', 'PEN\u00a025.37'],
+  ];
+
+  for (const [locale, currency, amount, expected] of cases) {
+    it(`names ${currency} once for "${amount}" in ${locale}`, () => {
+      const text = formatMoneyWithCode(amount, currency, locale);
+      expect(text).toBe(expected);
+      expect(text.split(currency).length - 1).toBe(1);
+    });
+  }
 });

@@ -3,7 +3,6 @@
     "formatLocale": "es-419"
   },
   "common": {
-    "amountInCurrency": "{{amount}}\u00a0{{currency}}",
     "loading": "Cargando…",
     "retry": "Reintentar"
   },
