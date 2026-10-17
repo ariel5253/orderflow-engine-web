@@ -22,10 +22,10 @@ const PRODUCTS_PATH = '/api/v1/products';
 const EC_PRODUCTS = {
   currency: 'USD',
   items: [
-    { sku: 'BEV-COLA-1500', description: 'Cola 1.5 l', listPrice: '1.45', taxRate: '0.150000' },
-    { sku: 'BEV-COLA-350', description: 'Cola 350 ml', listPrice: '0.60', taxRate: '0.150000' },
-    { sku: 'BEV-WATER-600', description: 'Water 600 ml', listPrice: '0.45', taxRate: '0.150000' },
-    { sku: 'SNK-PLANTAIN-45', description: 'Plantain chips 45 g', listPrice: '0.55', taxRate: '0.150000' },
+    { sku: 'BEV-COLA-1500', description: 'Gaseosa cola 1,5 l', listPrice: '1.45', taxRate: '0.150000' },
+    { sku: 'BEV-COLA-350', description: 'Gaseosa cola 350 ml', listPrice: '0.60', taxRate: '0.150000' },
+    { sku: 'BEV-WATER-600', description: 'Agua 600 ml', listPrice: '0.45', taxRate: '0.150000' },
+    { sku: 'SNK-PLANTAIN-45', description: 'Chifles 45 g', listPrice: '0.55', taxRate: '0.150000' },
   ],
 };
 
@@ -57,7 +57,9 @@ describe('cart (/cart)', () => {
     await settle(fixture);
 
     expect(texts(fixture, 'h1')).toEqual(['Comprar']);
-    expect(texts(fixture, '.product-card__name')).toEqual(['Cola 1.5 l', 'Cola 350 ml', 'Water 600 ml', 'Chips 45 g']);
+    // COP and USD share the $ symbol: the cart names the currency by its code above the grid (SPEC §10.3).
+    expect(texts(fixture, '.cart-currency')).toEqual(['Precios en COP']);
+    expect(texts(fixture, '.product-card__name')).toEqual(['Gaseosa cola 1,5 l', 'Gaseosa cola 350 ml', 'Agua 600 ml', 'Papas fritas 45 g']);
     expect(texts(fixture, '.product-card__sku')).toEqual(['BEV-COLA-1500', 'BEV-COLA-350', 'BEV-WATER-600', 'SNK-CHIPS-45']);
     expect(texts(fixture, '.product-card__amount')).toEqual(['$5,200', '$2,500', '$1,500', '$1,800']);
     expect(texts(fixture, '.product-card__tax')).toEqual(['Impuesto 19%', 'Impuesto 19%', 'Impuesto 19%', 'Impuesto 5%']);
@@ -153,14 +155,18 @@ describe('cart (/cart)', () => {
     await settle(fixture);
     await typeQuantity('BEV-COLA-350', '25');
 
+    // The seeded stores, named in the tenants' language.
+    expect(texts(fixture, '.store-picker__value')).toEqual(['Tienda Norte']);
     element(fixture, '.store-picker summary').click();
     TestBed.tick();
+    expect(texts(fixture, '.store-picker__option')).toEqual(['Tienda Norte', 'Tienda Sur', 'Tienda Quito', 'Tienda Guayaquil']);
     button(fixture, STORES[2].name).click();
     TestBed.tick();
     expectRequest({ method: 'GET', url: PRODUCTS_PATH, store: STORES[2] }).flush(EC_PRODUCTS);
     await settle(fixture);
     expect(texts(fixture, '.store-picker__value')).toEqual([STORES[2].name]);
     expect(texts(fixture, '.product-card__amount')).toEqual(['$1.45', '$0.60', '$0.45', '$0.55']);
+    expect(texts(fixture, '.cart-currency')).toEqual(['Precios en USD']);
     expect(quantityInput('BEV-COLA-350').value).toBe('0');
     expect(texts(fixture, '.action-bar__summary')).toEqual(['Agrega productos para cotizar']);
     await typeQuantity('SNK-PLANTAIN-45', '2');
@@ -268,6 +274,7 @@ describe('cart (/cart)', () => {
     await settle(fixture);
 
     expect(texts(fixture, 'h1')).toEqual(['Shop']);
+    expect(texts(fixture, '.cart-currency')).toEqual(['Prices in COP']);
     expect(texts(fixture, '.product-card__tax')[0]).toBe('Tax 19%');
     expect(texts(fixture, '.action-bar__summary')).toEqual(['Add products to get a quote']);
     stepButtons('BEV-COLA-350').increase.click();

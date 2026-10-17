@@ -208,7 +208,7 @@ describe('problem -> action (AC-51)', () => {
         const fixture = await failConfirmation(code, status);
         expectNotice(fixture, code, action);
         // The quote stays on screen under the notice.
-        expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647']);
+        expect(texts(fixture, '.action-bar__total-value')).toEqual(['$115,647\u00a0COP']);
 
         takeWayOut(fixture);
         switch (action) {

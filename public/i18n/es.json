@@ -3,6 +3,7 @@
     "formatLocale": "es-419"
   },
   "common": {
+    "amountInCurrency": "{{amount}}\u00a0{{currency}}",
     "loading": "Cargando…",
     "retry": "Reintentar"
   },
@@ -40,6 +41,7 @@
   "cart": {
     "title": "Comprar",
     "subtitle": "Precios de lista, sin impuestos. Los descuentos, los impuestos y el total llegan con la cotización.",
+    "currency": "Precios en {{currency}}",
     "productTax": "Impuesto {{rate}}",
     "quantity": "Cantidad de {{name}}",
     "decrease": "Quitar una unidad de {{name}}",

@@ -33,7 +33,7 @@ const EC_HISTORY: OrderHistory = {
 };
 
 /** A store list that outlived its customer: the API no longer knows it. */
-const STALE_STORE: Store = { tenantId: 'co-alpha', customerId: '01a13cdb-cc00-7001-8001-0000000000ff', name: 'Closed Corner Shop' };
+const STALE_STORE: Store = { tenantId: 'co-alpha', customerId: '01a13cdb-cc00-7001-8001-0000000000ff', name: 'Tienda Cerrada' };
 
 /** The confirmation time as the screen writes it: Intl in the dictionary's locale and the browser's time zone. */
 function dateOf(instant: string): string {
@@ -102,7 +102,7 @@ describe('My orders reads its writes (AC-52)', () => {
     expect(texts(fixture, '.page-subtitle')).toEqual(['Del más reciente al más antiguo']);
     expect(numbers(fixture)).toEqual(['CO-000042', 'CO-000041', 'CO-000040']);
     expect(texts(fixture, '.order-item__date')).toEqual(HISTORY.items.map((item) => dateOf(item.confirmedAt)));
-    expect(totals(fixture)).toEqual(['$115,647', '$71,103', '$11,529']);
+    expect(totals(fixture)).toEqual(['$115,647\u00a0COP', '$71,103\u00a0COP', '$11,529\u00a0COP']);
     const links = Array.from<HTMLAnchorElement>(fixture.nativeElement.querySelectorAll('a.order-item'));
     expect(links.map((link) => link.getAttribute('href'))).toEqual(HISTORY.items.map((item) => `/orders/${item.orderId}`));
 
@@ -122,7 +122,7 @@ describe('My orders reads its writes (AC-52)', () => {
     const fixture = await openApp('/orders', { stores: [STORES[2]] });
     expectRequest({ method: 'GET', url: historyUrl(STORES[2]), store: STORES[2] }).flush(EC_HISTORY);
     await settle(fixture);
-    expect(totals(fixture)).toEqual(['$77.11', '$0.60']);
+    expect(totals(fixture)).toEqual(['$77.11\u00a0USD', '$0.60\u00a0USD']);
 
     // A currency whose symbol is neither the peso's nor the dollar's: the client can take it only from the body.
     await navigate('/cart');
@@ -131,7 +131,7 @@ describe('My orders reads its writes (AC-52)', () => {
     await navigate('/orders');
     expectRequest({ method: 'GET', url: historyUrl(STORES[2]), store: STORES[2] }).flush({ ...EC_HISTORY, currency: 'EUR' });
     await settle(fixture);
-    expect(totals(fixture)).toEqual(EC_HISTORY.items.map((item) => formatMoney(item.total, 'EUR', 'es-419')));
+    expect(totals(fixture)).toEqual(EC_HISTORY.items.map((item) => `${formatMoney(item.total, 'EUR', 'es-419')}\u00a0EUR`));
     expect(totals(fixture).every((total) => total.includes('€'))).toBe(true);
   });
 
@@ -152,7 +152,7 @@ describe('My orders reads its writes (AC-52)', () => {
     expectRequest({ method: 'GET', url: `/api/v1/orders/${ORDER.orderId}` }).flush(ORDER);
     await settle(fixture);
     const confirmedTotal = texts(fixture, '.action-bar__total-value');
-    expect(confirmedTotal).toEqual(['$115,647']);
+    expect(confirmedTotal).toEqual(['$115,647\u00a0COP']);
 
     button(fixture, 'Ver mis pedidos').click();
     await vi.waitFor(() => expect(currentUrl()).toBe('/orders'));

@@ -6,6 +6,7 @@ import stores from '../../public/config/stores.json';
 import { App } from '../app/app';
 import { routes } from '../app/app.routes';
 import { apiHeadersInterceptor } from '../app/core/api-headers.interceptor';
+import { BROWSER_STORAGE } from '../app/core/browser-storage';
 import { Language } from '../app/core/language';
 import { Order, OrderHistory } from '../app/core/order-api';
 import { ProductList } from '../app/core/product-api';
@@ -14,7 +15,7 @@ import { Store, StoreContext } from '../app/core/store-context';
 import { VISUAL_VIEWPORT, VisualViewportPort } from '../app/ui/ui-action-bar/ui-action-bar';
 import quoteBody from './order-summary.fixture.json';
 import productsBody from './products.fixture.json';
-import { provideTestTranslations } from './translations';
+import { provideTestTranslations, provideVisitTranslations } from './translations';
 
 /*
  * The whole client, shell and routes, on a simulated backend: every spec that reaches the API answers through
@@ -54,7 +55,15 @@ export function historyUrl(store: Store = STORES[0]): string {
 }
 
 export interface AppOptions {
+  /** The language the client starts in. Without it, and without `query`, it starts in Spanish. */
   readonly language?: Language;
+  /**
+   * Opens the client as a visit to a page with this query string, such as '?lang=en': the client picks its language
+   * itself, as in the browser. Given with `language`, `language` is ignored.
+   */
+  readonly query?: string;
+  /** The browser storage the client sees, or null for none. Without it, the page's localStorage. */
+  readonly storage?: Storage | null;
   readonly stores?: readonly Store[];
   readonly visualViewport?: VisualViewportPort;
 }
@@ -65,8 +74,9 @@ export async function openApp(url: string, options: AppOptions = {}): Promise<Co
     providers: [
       provideHttpClient(withInterceptors([apiHeadersInterceptor])),
       provideHttpClientTesting(),
-      provideTestTranslations(options.language ?? 'es'),
+      options.query === undefined ? provideTestTranslations(options.language ?? 'es') : provideVisitTranslations(options.query),
       provideRouter(routes, withComponentInputBinding()),
+      ...(options.storage === undefined ? [] : [{ provide: BROWSER_STORAGE, useValue: options.storage }]),
       ...(options.visualViewport ? [{ provide: VISUAL_VIEWPORT, useValue: options.visualViewport }] : []),
     ],
   });

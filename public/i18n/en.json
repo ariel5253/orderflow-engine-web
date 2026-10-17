@@ -3,6 +3,7 @@
     "formatLocale": "en"
   },
   "common": {
+    "amountInCurrency": "{{amount}}\u00a0{{currency}}",
     "loading": "Loading…",
     "retry": "Retry"
   },
@@ -40,6 +41,7 @@
   "cart": {
     "title": "Shop",
     "subtitle": "List prices, before taxes. Discounts, taxes and the total come with the quote.",
+    "currency": "Prices in {{currency}}",
     "productTax": "Tax {{rate}}",
     "quantity": "Quantity of {{name}}",
     "decrease": "Remove one unit of {{name}}",

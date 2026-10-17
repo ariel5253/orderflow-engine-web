@@ -20,6 +20,7 @@
     }
 
     @if (products(); as products) {
+      <p class="cart-currency"><ui-text>{{ 'cart.currency' | translate: { currency: products.currency } }}</ui-text></p>
       <ul class="product-grid">
         @for (product of products.items; track product.sku) {
           <li class="product-card">

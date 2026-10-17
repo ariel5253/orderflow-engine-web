@@ -1,4 +1,11 @@
-/* The cart's own parts: the product grid, the quantity stepper and the payment method. */
+/* The cart's own parts: the currency line, the product grid, the quantity stepper and the payment method. */
+
+/* The currency of every price below, by its ISO code: COP and USD share the $ symbol (SPEC §10.3). */
+.cart-currency {
+  color: var(--ofe-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
 
 /* One product grid; every image goes through ui-product-image, so every card's image is the same square. */
 .product-grid {
