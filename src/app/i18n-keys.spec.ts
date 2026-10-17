@@ -1,10 +1,17 @@
 import en from '../../public/i18n/en.json';
 import es from '../../public/i18n/es.json';
 import appTemplate from './app.html' with { loader: 'text' };
+import breakdownLinesTemplate from './breakdown/breakdown-lines.html' with { loader: 'text' };
+import breakdownTotalsTemplate from './breakdown/breakdown-totals.html' with { loader: 'text' };
+import { BUILT_KEYS, COUNT_FORMS, lineCountKey, unitCountKey } from './core/dictionary-keys';
 import { FORMAT_LOCALE_KEY, Language, SUPPORTED_LANGUAGES } from './core/language';
-import { COUNT_FORMS, DISCOUNT_ORIGIN_KINDS, QUOTE_STATUSES, enumKey, lineCountKey } from './pages/order-summary/order-summary-keys';
+import cartTemplate from './pages/cart/cart.html' with { loader: 'text' };
 import orderSummaryTemplate from './pages/order-summary/order-summary.html' with { loader: 'text' };
+import orderTemplate from './pages/order/order.html' with { loader: 'text' };
+import shellHeaderTemplate from './shell/shell-header.html' with { loader: 'text' };
+import storePickerTemplate from './shell/store-picker.html' with { loader: 'text' };
 import actionBarTemplate from './ui/ui-action-bar/ui-action-bar.html' with { loader: 'text' };
+import noticeTemplate from './ui/ui-notice/ui-notice.html' with { loader: 'text' };
 import problemNoticeTemplate from './ui/ui-problem-notice/ui-problem-notice.html' with { loader: 'text' };
 import productImageTemplate from './ui/ui-product-image/ui-product-image.html' with { loader: 'text' };
 import textTemplate from './ui/ui-text/ui-text.html' with { loader: 'text' };
@@ -15,8 +22,15 @@ import textTemplate from './ui/ui-text/ui-text.html' with { loader: 'text' };
  */
 const TEMPLATES: Readonly<Record<string, string>> = {
   'app.html': appTemplate,
+  'breakdown/breakdown-lines.html': breakdownLinesTemplate,
+  'breakdown/breakdown-totals.html': breakdownTotalsTemplate,
+  'pages/cart/cart.html': cartTemplate,
   'pages/order-summary/order-summary.html': orderSummaryTemplate,
+  'pages/order/order.html': orderTemplate,
+  'shell/shell-header.html': shellHeaderTemplate,
+  'shell/store-picker.html': storePickerTemplate,
   'ui/ui-action-bar/ui-action-bar.html': actionBarTemplate,
+  'ui/ui-notice/ui-notice.html': noticeTemplate,
   'ui/ui-problem-notice/ui-problem-notice.html': problemNoticeTemplate,
   'ui/ui-product-image/ui-product-image.html': productImageTemplate,
   'ui/ui-text/ui-text.html': textTemplate,
@@ -26,16 +40,10 @@ const DICTIONARIES: Readonly<Record<Language, unknown>> = { es, en };
 
 /** A literal key: 'orderSummary.title' | translate */
 const LITERAL_KEY = /'([^'\s]+)'\s*\|\s*translate\b/g;
-/** A key built at run time from an API value or a count, through enumKey. */
-const BUILT_KEY = /\b(statusKey|originKey|linesKey)\([^()]*\)\s*\|\s*translate\b/g;
+/** A key built at run time from an API value, a count, a language or a way out, through core/dictionary-keys. */
+const BUILT_KEY =
+  /\b(statusKey|orderStatusKey|originKey|paymentKey|languageKey|languageNameKey|actionKey|linesKey|unitsKey)\([^()]*\)\s*\|\s*translate\b/g;
 const ANY_TRANSLATE = /\|\s*translate\b/g;
-
-/** The keys built at run time, for every value the contract allows (status, discount origin kind) and each count form. */
-const BUILT_KEYS = [
-  ...QUOTE_STATUSES.map((status) => enumKey('status', status)),
-  ...DISCOUNT_ORIGIN_KINDS.map((kind) => enumKey('origin', kind)),
-  ...COUNT_FORMS.map((form) => enumKey('lines', form)),
-];
 
 function flatten(node: unknown, prefix = '', entries = new Map<string, unknown>()): Map<string, unknown> {
   if (node !== null && typeof node === 'object' && !Array.isArray(node)) {
@@ -100,7 +108,7 @@ describe('i18n dictionaries (AC-46)', () => {
     }
   });
 
-  it('every key the code uses exists, including the keys built from status and origin values', () => {
+  it('every key the code uses exists, including the keys built from status, origin, payment method, language and action values', () => {
     for (const key of usedKeys()) {
       for (const language of SUPPORTED_LANGUAGES) {
         expect(flat[language].has(key), `${language}: ${key}`).toBe(true);
@@ -109,14 +117,19 @@ describe('i18n dictionaries (AC-46)', () => {
   });
 
   it('every count, in every formatting locale, picks one of the count forms the dictionaries write', () => {
-    const forms = new Set(COUNT_FORMS.map((form) => enumKey('lines', form)));
-    for (const language of SUPPORTED_LANGUAGES) {
-      const locale = String(flat[language].get(FORMAT_LOCALE_KEY));
-      for (const count of [0, 1, 2, 21, 1_000_000]) {
-        expect(forms.has(lineCountKey(count, locale)), `${locale}: ${count}`).toBe(true);
+    for (const [group, countKey] of [
+      ['orderSummary.lines', lineCountKey],
+      ['cart.units', unitCountKey],
+    ] as const) {
+      const forms = new Set(COUNT_FORMS.map((form) => `${group}.${form}`));
+      for (const language of SUPPORTED_LANGUAGES) {
+        const locale = String(flat[language].get(FORMAT_LOCALE_KEY));
+        for (const count of [0, 1, 2, 21, 1_000_000]) {
+          expect(forms.has(countKey(count, locale)), `${locale}: ${count}`).toBe(true);
+        }
+        expect(countKey(1, locale)).toBe(`${group}.one`);
+        expect(countKey(2, locale)).toBe(`${group}.other`);
       }
-      expect(lineCountKey(1, locale)).toBe(enumKey('lines', 'one'));
-      expect(lineCountKey(2, locale)).toBe(enumKey('lines', 'other'));
     }
   });
 

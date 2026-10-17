@@ -1,0 +1,86 @@
+/* The state of a screen: icon, title, detail and the one way out, tinted by its tone. */
+ui-notice {
+  display: block;
+  min-width: 0;
+}
+
+ui-notice .notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ofe-space-3);
+  padding: var(--ofe-space-3);
+  border: 1px solid var(--ofe-border-strong);
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-surface-sunken);
+  color: var(--ofe-ink);
+}
+
+ui-notice .notice[data-tone='success'] {
+  border-color: var(--ofe-success-border);
+  background: var(--ofe-success-bg);
+  color: var(--ofe-success-ink);
+}
+
+ui-notice .notice[data-tone='warning'] {
+  border-color: var(--ofe-promo-border);
+  background: var(--ofe-promo-bg);
+  color: var(--ofe-promo-ink);
+}
+
+ui-notice .notice__icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+ui-notice .notice__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ofe-space-1);
+  min-width: 0;
+}
+
+ui-notice .notice__title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+ui-notice .notice__detail {
+  color: var(--ofe-ink-soft);
+}
+
+ui-notice .notice__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin-top: var(--ofe-space-2);
+  padding: 0 var(--ofe-space-4);
+  border: 1px solid currentColor;
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-surface);
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+ui-notice .notice__action:disabled {
+  color: var(--ofe-text-muted);
+  cursor: not-allowed;
+}
+
+ui-notice .notice__action:focus-visible {
+  outline: 2px solid var(--ofe-focus);
+  outline-offset: 2px;
+}

@@ -1,0 +1,142 @@
+/* The cart's own parts: the product grid, the quantity stepper and the payment method. */
+
+/* One product grid; every image goes through ui-product-image, so every card's image is the same square. */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+  gap: var(--ofe-space-3);
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofe-space-2);
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--ofe-border);
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-surface);
+}
+
+.product-card__body {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  gap: var(--ofe-space-1);
+  min-width: 0;
+}
+
+.product-card__name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.product-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--ofe-space-2);
+}
+
+/* The price never splits: when the row is tight the tax rate moves under it. */
+.product-card__amount {
+  flex: none;
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.product-card__tax {
+  min-width: 0;
+  color: var(--ofe-text-subtle);
+  font-size: 12px;
+}
+
+/* A segmented stepper: three 44 px targets with no gaps, so it fits a 160 px card. */
+.stepper {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--ofe-border-strong);
+  border-radius: var(--ofe-radius);
+  background: var(--ofe-surface-sunken);
+}
+
+.stepper__button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--ofe-radius);
+  background: transparent;
+  color: var(--ofe-ink);
+  cursor: pointer;
+}
+
+.stepper__button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.stepper__input {
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 0;
+  background: var(--ofe-surface);
+  color: var(--ofe-ink);
+  font: inherit;
+  font-size: 16px; /* 16 px keeps mobile browsers from zooming in on focus */
+  font-variant-numeric: tabular-nums lining-nums;
+  text-align: center;
+}
+
+.stepper__button:focus-visible,
+.stepper__input:focus-visible,
+.payment__option:focus-within {
+  outline: 2px solid var(--ofe-focus);
+  outline-offset: 2px;
+}
+
+.payment {
+  margin: 0;
+  padding: var(--ofe-space-3);
+}
+
+.payment__legend {
+  padding: 0 var(--ofe-space-1);
+  font-weight: 600;
+}
+
+.payment__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ofe-space-2) var(--ofe-space-4);
+}
+
+.payment__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ofe-space-2);
+  min-width: 0;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.payment__option input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--ofe-ink);
+}

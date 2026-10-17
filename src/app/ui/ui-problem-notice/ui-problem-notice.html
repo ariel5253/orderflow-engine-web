@@ -16,7 +16,7 @@
       <p class="notice__detail"><ui-text>{{ 'problem.network.detail' | translate }}</ui-text></p>
     }
     @if (actionLabel(); as label) {
-      <button type="button" class="notice__action" (click)="action.emit()">
+      <button type="button" class="notice__action" [disabled]="actionDisabled()" (click)="action.emit()">
         <ui-text>{{ label }}</ui-text>
       </button>
     }

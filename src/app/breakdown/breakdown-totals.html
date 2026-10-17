@@ -1,0 +1,53 @@
+@let body = breakdown();
+<section class="card" aria-labelledby="totals-title">
+  <div class="card__header">
+    <h2 class="card__title" id="totals-title"><ui-text>{{ 'orderSummary.totals.title' | translate }}</ui-text></h2>
+    <ui-text class="card__subtitle">{{ 'orderSummary.totals.currency' | translate: { currency: body.currency } }}</ui-text>
+  </div>
+  <div class="card__body">
+    <dl class="totals totals__summary">
+      <dt><ui-text>{{ 'orderSummary.totals.grossSubtotal' | translate }}</ui-text></dt>
+      <dd><ui-text class="amount">{{ body.totals.grossSubtotal | money: body.currency }}</ui-text></dd>
+    </dl>
+    @if (body.totals.discounts.length) {
+      <h3 class="totals__group"><ui-text>{{ 'orderSummary.totals.discounts' | translate }}</ui-text></h3>
+      <dl class="totals totals__discounts">
+        @for (discount of body.totals.discounts; track discount.origin) {
+          <dt class="is-nested is-discount">
+            <ui-text>{{ originKey(discount.origin) | translate }}</ui-text>
+            <ui-text class="code">{{ discount.origin }}</ui-text>
+          </dt>
+          <dd class="is-discount">
+            <ui-text class="amount">{{ discount.amount | money: body.currency : 'negative' }}</ui-text>
+          </dd>
+        }
+      </dl>
+    }
+    @if (body.totals.gifts.length) {
+      <h3 class="totals__group"><ui-text>{{ 'orderSummary.totals.gifts' | translate }}</ui-text></h3>
+      <dl class="totals totals__gifts">
+        @for (gift of body.totals.gifts; track gift.origin + gift.sku) {
+          <dt class="is-nested is-discount">
+            <ui-text>
+              {{ 'orderSummary.totals.giftItem' | translate: { name: giftName(body, gift.sku), qty: (gift.qty | count) } }}
+            </ui-text>
+            <ui-text class="code">{{ gift.origin }}</ui-text>
+          </dt>
+          <dd class="is-discount"><ui-text>{{ 'orderSummary.gift.free' | translate }}</ui-text></dd>
+        }
+      </dl>
+    }
+    <hr class="totals__rule" />
+    <dl class="totals totals__summary">
+      <dt><ui-text>{{ 'orderSummary.totals.taxableBase' | translate }}</ui-text></dt>
+      <dd><ui-text class="amount">{{ body.totals.taxableBase | money: body.currency }}</ui-text></dd>
+      <dt><ui-text>{{ 'orderSummary.totals.taxes' | translate }}</ui-text></dt>
+      <dd><ui-text class="amount">{{ body.totals.taxes | money: body.currency }}</ui-text></dd>
+    </dl>
+    <hr class="totals__rule" />
+    <dl class="totals totals__grand">
+      <dt class="is-total"><ui-text>{{ 'orderSummary.totals.total' | translate }}</ui-text></dt>
+      <dd class="is-total"><ui-text class="amount">{{ body.totals.total | money: body.currency }}</ui-text></dd>
+    </dl>
+  </div>
+</section>

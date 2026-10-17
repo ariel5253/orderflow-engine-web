@@ -13,6 +13,48 @@
       "detail": "Revisa tu conexión e inténtalo de nuevo."
     }
   },
+  "shell": {
+    "brand": "Orderflow",
+    "language": {
+      "label": "Idioma",
+      "es": "ES",
+      "en": "EN"
+    },
+    "languageName": {
+      "es": "Español",
+      "en": "English"
+    },
+    "nav": {
+      "label": "Navegación principal",
+      "shop": "Comprar"
+    },
+    "store": {
+      "label": "Tienda"
+    }
+  },
+  "paymentMethod": {
+    "CASH": "Contado",
+    "CREDIT": "Crédito"
+  },
+  "cart": {
+    "title": "Comprar",
+    "subtitle": "Precios de lista, sin impuestos. Los descuentos, los impuestos y el total llegan con la cotización.",
+    "productTax": "Impuesto {{rate}}",
+    "quantity": "Cantidad de {{name}}",
+    "decrease": "Quitar una unidad de {{name}}",
+    "increase": "Agregar una unidad de {{name}}",
+    "payment": "Forma de pago",
+    "units": {
+      "one": "{{count}} unidad",
+      "other": "{{count}} unidades"
+    },
+    "empty": "Agrega productos para cotizar",
+    "actions": {
+      "quote": "Cotizar",
+      "quoting": "Cotizando…",
+      "review": "Revisar carrito"
+    }
+  },
   "orderSummary": {
     "title": "Resumen del pedido",
     "quote": "Cotización {{id}}",
@@ -64,6 +106,50 @@
       "short": "Te faltan {{amount}} de cupo",
       "shortfall": "Faltante",
       "advisory": "Es una consulta: el cupo se descuenta solo al confirmar"
+    },
+    "actions": {
+      "confirm": "Confirmar pedido"
+    }
+  },
+  "quote": {
+    "short": {
+      "title": "El pedido no cabe en tu cupo",
+      "detail": "Supera tu cupo disponible en {{amount}}. Puedes pagarlo de contado."
+    },
+    "expired": {
+      "title": "La cotización venció",
+      "detail": "El precio se garantizaba hasta {{time}}. Vuelve a cotizar para ver los precios vigentes."
+    },
+    "confirmed": {
+      "title": "Esta cotización ya es un pedido",
+      "detail": "Una cotización se confirma una sola vez."
+    },
+    "actions": {
+      "confirming": "Confirmando…",
+      "edit": "Modificar carrito",
+      "payCash": "Pagar de contado",
+      "requote": "Volver a cotizar",
+      "viewOrder": "Ver pedido {{number}}"
+    }
+  },
+  "order": {
+    "heading": "Pedido",
+    "title": "Pedido {{number}}",
+    "status": {
+      "CONFIRMED": "Confirmado"
+    },
+    "confirmedAt": "Confirmado el {{time}}",
+    "payment": "Pago: {{method}}",
+    "created": {
+      "title": "Pedido confirmado",
+      "detail": "Tu número de pedido es {{number}}."
+    },
+    "replayed": {
+      "title": "Este pedido ya estaba registrado",
+      "detail": "Recibimos la misma confirmación otra vez: no se creó otro pedido ni se usó más cupo."
+    },
+    "actions": {
+      "continue": "Seguir comprando"
     }
   }
 }

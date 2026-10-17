@@ -1,0 +1,22 @@
+[
+  {
+    "tenantId": "co-alpha",
+    "customerId": "01a13cdb-cc00-7001-8001-000000000001",
+    "name": "Tienda de barrio La Esquina del Norte, distribuidora mayorista de bebidas y pasabocas para todo el sector comercial del norte de la ciudad"
+  },
+  {
+    "tenantId": "co-alpha",
+    "customerId": "01a13cdb-cc00-7001-8001-000000000002",
+    "name": "MinimercadoDelSurSinEspaciosParaComprobarQueElNombreDeLaTiendaSeParteYNuncaSeCorta, sucursal principal"
+  },
+  {
+    "tenantId": "ec-alpha",
+    "customerId": "01a13cdb-cc00-7002-8001-000000000001",
+    "name": "Tienda de la esquina de Quito, abarrotes y bebidas al por mayor con entrega en el centro histórico y los valles"
+  },
+  {
+    "tenantId": "ec-alpha",
+    "customerId": "01a13cdb-cc00-7002-8001-000000000002",
+    "name": "Tienda de la esquina de Guayaquil, víveres y bebidas frías para el malecón y los barrios del sur de la ciudad"
+  }
+]
