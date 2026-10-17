@@ -1,0 +1,69 @@
+{
+  "app": {
+    "formatLocale": "es-419"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "retry": "Reintentar"
+  },
+  "problem": {
+    "meta": "Código {{code}} · Ref. {{ref}}",
+    "network": {
+      "title": "No pudimos comunicarnos con el servidor",
+      "detail": "Revisa tu conexión e inténtalo de nuevo."
+    }
+  },
+  "orderSummary": {
+    "title": "Resumen del pedido",
+    "quote": "Cotización {{id}}",
+    "status": {
+      "OPEN": "Abierta",
+      "CONFIRMED": "Confirmada",
+      "EXPIRED": "Vencida"
+    },
+    "expiresAt": "Precio garantizado hasta {{time}}",
+    "lines": {
+      "title": "Productos",
+      "one": "{{count}} línea",
+      "other": "{{count}} líneas"
+    },
+    "line": {
+      "qtyTimesPrice": "{{qty}} × {{price}}",
+      "gross": "Bruto",
+      "comboShare": "Parte del combo",
+      "comboShareHint": "Ya está dentro del descuento del combo del pedido",
+      "net": "Neto",
+      "taxableBase": "Base gravable",
+      "tax": "Impuesto ({{rate}})"
+    },
+    "gift": {
+      "badge": "Obsequio × {{qty}}",
+      "free": "Sin costo",
+      "referenceValue": "Valor de referencia",
+      "taxNote": "El impuesto del obsequio lo paga el cliente"
+    },
+    "origin": {
+      "TIER": "Descuento por volumen",
+      "COMBO": "Combo"
+    },
+    "totals": {
+      "title": "Totales",
+      "currency": "Valores en {{currency}}",
+      "grossSubtotal": "Subtotal bruto",
+      "discounts": "Descuentos",
+      "gifts": "Obsequios",
+      "giftItem": "{{name}} × {{qty}}",
+      "taxableBase": "Base gravable",
+      "taxes": "Impuestos",
+      "total": "Total"
+    },
+    "credit": {
+      "title": "Pago a crédito",
+      "available": "Cupo disponible",
+      "fits": "El pedido cabe en tu cupo",
+      "short": "Te faltan {{amount}} de cupo",
+      "shortfall": "Faltante",
+      "advisory": "Es una consulta: el cupo se descuenta solo al confirmar"
+    }
+  }
+}

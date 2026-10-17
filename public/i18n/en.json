@@ -1,0 +1,69 @@
+{
+  "app": {
+    "formatLocale": "en"
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Retry"
+  },
+  "problem": {
+    "meta": "Code {{code}} · Ref. {{ref}}",
+    "network": {
+      "title": "We could not reach the server",
+      "detail": "Check your connection and try again."
+    }
+  },
+  "orderSummary": {
+    "title": "Order summary",
+    "quote": "Quote {{id}}",
+    "status": {
+      "OPEN": "Open",
+      "CONFIRMED": "Confirmed",
+      "EXPIRED": "Expired"
+    },
+    "expiresAt": "Price held until {{time}}",
+    "lines": {
+      "title": "Products",
+      "one": "{{count}} line",
+      "other": "{{count}} lines"
+    },
+    "line": {
+      "qtyTimesPrice": "{{qty}} × {{price}}",
+      "gross": "Gross",
+      "comboShare": "Combo share",
+      "comboShareHint": "Already part of the order's combo discount",
+      "net": "Net",
+      "taxableBase": "Taxable base",
+      "tax": "Tax ({{rate}})"
+    },
+    "gift": {
+      "badge": "Gift × {{qty}}",
+      "free": "Free",
+      "referenceValue": "Reference value",
+      "taxNote": "The customer pays the gift's tax"
+    },
+    "origin": {
+      "TIER": "Volume discount",
+      "COMBO": "Combo"
+    },
+    "totals": {
+      "title": "Totals",
+      "currency": "Amounts in {{currency}}",
+      "grossSubtotal": "Gross subtotal",
+      "discounts": "Discounts",
+      "gifts": "Gifts",
+      "giftItem": "{{name}} × {{qty}}",
+      "taxableBase": "Taxable base",
+      "taxes": "Taxes",
+      "total": "Total"
+    },
+    "credit": {
+      "title": "Paid on credit",
+      "available": "Available credit",
+      "fits": "The order fits your credit",
+      "short": "You are {{amount}} short",
+      "shortfall": "Shortfall",
+      "advisory": "Advisory only: credit is used only when you confirm"
+    }
+  }
+}

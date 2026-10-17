@@ -12,3 +12,6 @@ coverage/
 
 # Local environment: only .env.example is versioned
 .env
+
+# Browser test artifacts (failure screenshots)
+.vitest/

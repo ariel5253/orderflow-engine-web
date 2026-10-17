@@ -1,0 +1,31 @@
+/* Sticky to the bottom of the viewport, padded with the safe-area insets (the host page sets viewport-fit=cover),
+   and lifted above the on-screen keyboard through an inline bottom offset that follows the visual viewport. */
+ui-action-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding:
+    var(--ofe-space-3)
+    max(var(--ofe-space-3), env(safe-area-inset-right))
+    max(var(--ofe-space-3), env(safe-area-inset-bottom))
+    max(var(--ofe-space-3), env(safe-area-inset-left));
+  border-top: 1px solid var(--ofe-border);
+  background: var(--ofe-surface);
+  box-shadow: var(--ofe-shadow-up);
+}
+
+/* Every control in the bar is a comfortable touch target. */
+ui-action-bar :is(button, a[href], input, select, [role='button']) {
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+ui-action-bar a[href] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

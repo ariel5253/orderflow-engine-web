@@ -1,0 +1,222 @@
+<div class="page">
+  <header class="page-header">
+    <div class="page-header__inner">
+      <h1 class="page-title"><ui-text>{{ 'orderSummary.title' | translate }}</ui-text></h1>
+      @if (quote(); as quote) {
+        <div class="page-meta">
+          <span class="chip chip--status" [attr.data-status]="quote.status">
+            <ui-text>{{ statusKey(quote.status) | translate }}</ui-text>
+          </span>
+          <ui-text>{{ 'orderSummary.expiresAt' | translate: { time: (quote.expiresAt | dateTime) } }}</ui-text>
+          <ui-text class="code">{{ 'orderSummary.quote' | translate: { id: quote.quoteId } }}</ui-text>
+        </div>
+      }
+    </div>
+  </header>
+
+  <main class="page-main">
+    @if (quote(); as quote) {
+      <section class="card" aria-labelledby="lines-title">
+        <div class="card__header">
+          <h2 class="card__title" id="lines-title"><ui-text>{{ 'orderSummary.lines.title' | translate }}</ui-text></h2>
+          <ui-text class="card__subtitle">
+            {{ linesKey(quote.lines.length) | translate: { count: (quote.lines.length | count) } }}
+          </ui-text>
+        </div>
+        <ul>
+          @for (line of quote.lines; track $index) {
+            <li class="line" [class.line--gift]="line.isGift">
+              <ui-product-image [sku]="line.sku" />
+              <div class="line__top">
+                <div class="line__identity">
+                  <h3 class="line__name"><ui-text>{{ line.description }}</ui-text></h3>
+                  <div class="line__meta">
+                    <ui-text class="code">{{ line.sku }}</ui-text>
+                    @if (line.isGift) {
+                      <span class="chip chip--gift">
+                        <ui-text>{{ 'orderSummary.gift.badge' | translate: { qty: (line.qty | count) } }}</ui-text>
+                      </span>
+                      <ui-text class="code">{{ line.origin }}</ui-text>
+                    } @else {
+                      <ui-text class="line__qty">
+                        {{
+                          'orderSummary.line.qtyTimesPrice'
+                            | translate: { qty: (line.qty | count), price: (line.unitPrice | money: quote.currency) }
+                        }}
+                      </ui-text>
+                    }
+                  </div>
+                </div>
+                <div class="line__headline">
+                  <ui-text class="line__headline-label">{{ 'orderSummary.line.net' | translate }}</ui-text>
+                  @if (line.isGift) {
+                    <ui-text class="line__headline-value line__headline-value--free">
+                      {{ 'orderSummary.gift.free' | translate }}
+                    </ui-text>
+                  } @else {
+                    <ui-text class="line__headline-value amount">{{ line.net | money: quote.currency }}</ui-text>
+                  }
+                </div>
+              </div>
+              <dl class="breakdown">
+                @if (line.isGift) {
+                  @if (line.referenceValue; as referenceValue) {
+                    <dt><ui-text>{{ 'orderSummary.gift.referenceValue' | translate }}</ui-text></dt>
+                    <dd><ui-text class="amount">{{ referenceValue | money: quote.currency }}</ui-text></dd>
+                  }
+                } @else {
+                  <dt><ui-text>{{ 'orderSummary.line.gross' | translate }}</ui-text></dt>
+                  <dd><ui-text class="amount">{{ line.gross | money: quote.currency }}</ui-text></dd>
+                  @for (discount of line.discounts; track discount.origin) {
+                    <dt class="is-discount">
+                      <ui-text>{{ originKey(discount.origin) | translate }}</ui-text>
+                      <ui-text class="code">{{ discount.origin }}</ui-text>
+                    </dt>
+                    <dd class="is-discount">
+                      <ui-text class="amount">{{ discount.amount | money: quote.currency : 'negative' }}</ui-text>
+                    </dd>
+                  }
+                  <!-- A combo allocation only explains this line's base; it is never shown as a discount (A-07). -->
+                  @for (share of line.comboAllocations; track share.comboId) {
+                    <dt class="is-share">
+                      <ui-text>{{ 'orderSummary.line.comboShare' | translate }}</ui-text>
+                      <ui-text class="code">{{ comboOrigin(share.comboId) }}</ui-text>
+                      <ui-text class="note">{{ 'orderSummary.line.comboShareHint' | translate }}</ui-text>
+                    </dt>
+                    <dd class="is-share">
+                      <ui-text class="amount">{{ share.amount | money: quote.currency : 'negative' }}</ui-text>
+                    </dd>
+                  }
+                }
+                <dt class="is-strong"><ui-text>{{ 'orderSummary.line.taxableBase' | translate }}</ui-text></dt>
+                <dd class="is-strong"><ui-text class="amount">{{ line.taxableBase | money: quote.currency }}</ui-text></dd>
+                <dt class="is-tax">
+                  <ui-text>{{ 'orderSummary.line.tax' | translate: { rate: (line.taxRate | rate) } }}</ui-text>
+                </dt>
+                <dd class="is-tax"><ui-text class="amount">{{ line.tax | money: quote.currency }}</ui-text></dd>
+              </dl>
+              @if (line.isGift && !isZero(line.tax)) {
+                <p class="note line__note"><ui-text>{{ 'orderSummary.gift.taxNote' | translate }}</ui-text></p>
+              }
+            </li>
+          }
+        </ul>
+      </section>
+
+      <div class="summary-column">
+        <section class="card" aria-labelledby="totals-title">
+          <div class="card__header">
+            <h2 class="card__title" id="totals-title"><ui-text>{{ 'orderSummary.totals.title' | translate }}</ui-text></h2>
+            <ui-text class="card__subtitle">
+              {{ 'orderSummary.totals.currency' | translate: { currency: quote.currency } }}
+            </ui-text>
+          </div>
+          <div class="card__body">
+            <dl class="totals totals__summary">
+              <dt><ui-text>{{ 'orderSummary.totals.grossSubtotal' | translate }}</ui-text></dt>
+              <dd><ui-text class="amount">{{ quote.totals.grossSubtotal | money: quote.currency }}</ui-text></dd>
+            </dl>
+            @if (quote.totals.discounts.length) {
+              <h3 class="totals__group"><ui-text>{{ 'orderSummary.totals.discounts' | translate }}</ui-text></h3>
+              <dl class="totals totals__discounts">
+                @for (discount of quote.totals.discounts; track discount.origin) {
+                  <dt class="is-nested is-discount">
+                    <ui-text>{{ originKey(discount.origin) | translate }}</ui-text>
+                    <ui-text class="code">{{ discount.origin }}</ui-text>
+                  </dt>
+                  <dd class="is-discount">
+                    <ui-text class="amount">{{ discount.amount | money: quote.currency : 'negative' }}</ui-text>
+                  </dd>
+                }
+              </dl>
+            }
+            @if (quote.totals.gifts.length) {
+              <h3 class="totals__group"><ui-text>{{ 'orderSummary.totals.gifts' | translate }}</ui-text></h3>
+              <dl class="totals totals__gifts">
+                @for (gift of quote.totals.gifts; track gift.origin + gift.sku) {
+                  <dt class="is-nested is-discount">
+                    <ui-text>
+                      {{ 'orderSummary.totals.giftItem' | translate: { name: giftName(quote, gift.sku), qty: (gift.qty | count) } }}
+                    </ui-text>
+                    <ui-text class="code">{{ gift.origin }}</ui-text>
+                  </dt>
+                  <dd class="is-discount"><ui-text>{{ 'orderSummary.gift.free' | translate }}</ui-text></dd>
+                }
+              </dl>
+            }
+            <hr class="totals__rule" />
+            <dl class="totals totals__summary">
+              <dt><ui-text>{{ 'orderSummary.totals.taxableBase' | translate }}</ui-text></dt>
+              <dd><ui-text class="amount">{{ quote.totals.taxableBase | money: quote.currency }}</ui-text></dd>
+              <dt><ui-text>{{ 'orderSummary.totals.taxes' | translate }}</ui-text></dt>
+              <dd><ui-text class="amount">{{ quote.totals.taxes | money: quote.currency }}</ui-text></dd>
+            </dl>
+            <hr class="totals__rule" />
+            <dl class="totals totals__grand">
+              <dt class="is-total"><ui-text>{{ 'orderSummary.totals.total' | translate }}</ui-text></dt>
+              <dd class="is-total"><ui-text class="amount">{{ quote.totals.total | money: quote.currency }}</ui-text></dd>
+            </dl>
+          </div>
+        </section>
+
+        @if (quote.credit; as credit) {
+          <section class="card credit" aria-labelledby="credit-title">
+            <div class="card__header">
+              <h2 class="card__title" id="credit-title"><ui-text>{{ 'orderSummary.credit.title' | translate }}</ui-text></h2>
+            </div>
+            <div class="card__body">
+              <dl class="totals">
+                <dt><ui-text>{{ 'orderSummary.credit.available' | translate }}</ui-text></dt>
+                <dd><ui-text class="amount">{{ credit.available | money: quote.currency }}</ui-text></dd>
+                @if (!credit.fits) {
+                  <dt class="is-total"><ui-text>{{ 'orderSummary.credit.shortfall' | translate }}</ui-text></dt>
+                  <dd class="is-total"><ui-text class="amount">{{ credit.shortfall | money: quote.currency }}</ui-text></dd>
+                }
+              </dl>
+              @if (credit.fits) {
+                <p class="credit-status credit-status--fits">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M22 11.1V12a10 10 0 1 1-5.9-9.1" />
+                    <path d="M22 4 12 14l-3-3" />
+                  </svg>
+                  <ui-text>{{ 'orderSummary.credit.fits' | translate }}</ui-text>
+                </p>
+              } @else {
+                <p class="credit-status credit-status--short">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" />
+                    <path d="M12 8v4" />
+                    <path d="M12 16h.01" />
+                  </svg>
+                  <ui-text>
+                    {{ 'orderSummary.credit.short' | translate: { amount: (credit.shortfall | money: quote.currency) } }}
+                  </ui-text>
+                </p>
+              }
+              <p class="note"><ui-text>{{ 'orderSummary.credit.advisory' | translate }}</ui-text></p>
+            </div>
+          </section>
+        }
+      </div>
+    } @else if (failure(); as failure) {
+      <ui-problem-notice
+        [failure]="failure"
+        [actionLabel]="isRetryable(failure) ? ('common.retry' | translate) : null"
+        (action)="retry()"
+      />
+    } @else {
+      <p class="page-loading" aria-live="polite"><ui-text>{{ 'common.loading' | translate }}</ui-text></p>
+    }
+  </main>
+
+  @if (quote(); as quote) {
+    <ui-action-bar>
+      <div class="action-bar__inner">
+        <div class="action-bar__total">
+          <ui-text class="action-bar__total-label">{{ 'orderSummary.totals.total' | translate }}</ui-text>
+          <ui-text class="action-bar__total-value amount">{{ quote.totals.total | money: quote.currency }}</ui-text>
+        </div>
+      </div>
+    </ui-action-bar>
+  }
+</div>

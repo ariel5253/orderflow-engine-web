@@ -1,0 +1,78 @@
+/*
+ * Design tokens and base styles. Palette: slate ink, orange promotions, green success, red problems. Every text color
+ * keeps at least 4.5:1 contrast with each background it is used on.
+ */
+:root {
+  --ofe-ink: #0f172a;
+  --ofe-text-muted: #475569;
+  --ofe-text-subtle: #64748b;
+
+  --ofe-page: #f8fafc;
+  --ofe-surface: #ffffff;
+  --ofe-surface-sunken: #f1f5f9;
+  --ofe-border: #e2e8f0;
+
+  --ofe-promo-bg: #ffedd5;
+  --ofe-promo-ink: #9a3412;
+  --ofe-gift-row: #fffbf5;
+  --ofe-success-bg: #dcfce7;
+  --ofe-success-ink: #166534;
+  --ofe-danger-bg: #fee2e2;
+  --ofe-danger-border: #fecaca;
+  --ofe-danger-ink: #b91c1c;
+  --ofe-focus: #0f172a;
+
+  --ofe-font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ofe-font-mono: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+
+  --ofe-space-1: 4px;
+  --ofe-space-2: 8px;
+  --ofe-space-3: 16px;
+  --ofe-space-4: 24px;
+
+  --ofe-radius: 8px;
+  --ofe-radius-full: 9999px;
+
+  --ofe-shadow-up: 0 -10px 15px -3px rgba(15, 23, 42, 0.08), 0 -4px 6px -4px rgba(15, 23, 42, 0.03);
+
+  --ofe-image-ratio: 1 / 1;
+  --ofe-content-max: 1200px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--ofe-page);
+  color: var(--ofe-ink);
+  font-family: var(--ofe-font);
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+/* Identifiers and origins, shown raw so they can be audited. */
+.code {
+  font-family: var(--ofe-font-mono);
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--ofe-text-subtle);
+}
